@@ -29,7 +29,7 @@ Build mode: fast
   Learner check: Run `python3 -m http.server 8000`, open http://localhost:8000, and click through the answers. Does the limit change the way you expect? Does it look and feel like Treat Yourself?
   Commit: `Add profile screen with personalized, sourced sugar limit`
 
-- [ ] **2. Tap a treat and watch the scale fill while Honey reacts**
+- [x] **2. Tap a treat and watch the scale fill while Honey reacts**
   Becomes usable: The real Tracker screen. Category tabs and treat cards show added sugar and serving. Tapping a card logs it, so today's log and total update, the sugar scale fills toward your limit with the right color and readout, Honey's mood changes, and she waves. Rows can be removed. Starts with a first batch of verified, sourced treats; the log lives in memory for now.
   Why now: This completes the core loop (profile → treats → scale), which is the whole demo. Getting it in front of you early lets your feedback on look and feel shape the rest.
   PRD ref: `prd.md > The Core Journey` (steps 4, 6), `prd.md > Treat Picker`, `prd.md > Today's Log`, `prd.md > Sugar Scale and Honey's Reactions`, `prd.md > States and Boundaries` (empty log, over the limit)
@@ -145,3 +145,6 @@ Activity mode:
 ## Revisions
 
 - `recommendedLimit()` returns `sources` (a list) instead of a single `source` — the prediabetic limit cites two sources (WHO and AHA), so one field couldn't hold both.
+- The sugar tube shows 125% of the limit, so the dashed goal line sits at 80% height and going over is visible above it. The spec said fill `min(pct, 100)%`, which would have pinned the goal line to the very top, where nothing over the limit could show.
+- Treat sources are grocery-store product pages (Stop & Shop, Giant, Giant Food, Hannaford, Food Lion) that show the full Nutrition Facts panel, including "Added Sugar." The spec preferred brand pages or USDA FoodData Central, but those didn't work: the USDA demo key was rate-limited (HTTP 429), brand sites didn't resolve, three research agents stalled, and Open Food Facts listed Snickers at 0 g added sugar, so it was rejected as unreliable. Each value was read off the live page on 2026-10-06.
+- The full 23-item list landed in slice 2, not slice 3, because the research had to happen before any treat could be shown. Dropped: Starbucks Doubleshot Espresso & Cream (has milk and no added-sugar line), Inotea Matcha Latte (its listing showed exactly the same numbers as the Brown Sugar flavor, so it looked copied and wasn't trusted), Pepsi's Stop & Shop page (blocked; Giant Food's page was used instead).
