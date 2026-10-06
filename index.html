@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treat Yourself · a kind little added-sugar tracker</title>
+<meta name="description" content="Notice your added sugar without the guilt. A personal daily limit, sourced sugar counts, and Honey the bear cheering you on.">
+<meta name="theme-color" content="#ffd6e8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%AC%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script type="module" src="js/app.js"></script>
+</head>
+<body>
+
+<div class="sky" aria-hidden="true">
+  <span style="--x:5%;--d:24s;--delay:-4s;--s:1.1rem">♡</span>
+  <span style="--x:16%;--d:30s;--delay:-14s;--s:.85rem">✦</span>
+  <span style="--x:29%;--d:27s;--delay:-8s;--s:.8rem">✧</span>
+  <span style="--x:41%;--d:33s;--delay:-20s;--s:1rem">♡</span>
+  <span style="--x:55%;--d:26s;--delay:-11s;--s:.9rem">✦</span>
+  <span style="--x:66%;--d:31s;--delay:-23s;--s:1.15rem">♡</span>
+  <span style="--x:77%;--d:28s;--delay:-2s;--s:.8rem">✧</span>
+  <span style="--x:88%;--d:35s;--delay:-17s;--s:1rem">✦</span>
+  <span style="--x:95%;--d:29s;--delay:-26s;--s:.9rem">♡</span>
+</div>
+
+<main>
+
+  <!-- Profile screen: first open, or "Edit profile" -->
+  <section class="view profile-view" id="profile-view" aria-labelledby="profile-title">
+    <div class="profile-card">
+      <div class="profile-honey" id="profile-honey"></div>
+      <p class="logo">Treat Yourself</p>
+      <h1 id="profile-title">Let's find your daily sugar limit</h1>
+      <p class="lede">Two quick questions. Your answers stay on this device.</p>
+
+      <form id="profile-form" novalidate>
+        <fieldset class="question">
+          <legend>Which guideline fits you?</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="sex" value="female"><span>Female</span></label>
+            <label class="choice"><input type="radio" name="sex" value="male"><span>Male</span></label>
+            <label class="choice"><input type="radio" name="sex" value="unspecified"><span>Prefer not to say</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="question">
+          <legend>Are you prediabetic?</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="prediabetic" value="yes"><span>Yes</span></label>
+            <label class="choice"><input type="radio" name="prediabetic" value="no"><span>No</span></label>
+            <label class="choice"><input type="radio" name="prediabetic" value="unsure"><span>Not sure</span></label>
+          </div>
+        </fieldset>
+
+        <div class="limit-result" id="limit-result" aria-live="polite">
+          <p class="limit-waiting">Answer both and your limit shows up here. ✨</p>
+        </div>
+
+        <button type="submit" class="primary-btn start-btn" id="start-btn" disabled>Start tracking</button>
+      </form>
+
+      <p class="fine-print">General guidance, not medical advice.</p>
+    </div>
+  </section>
+
+  <!-- Tracker screen (slice 2 builds this out) -->
+  <section class="view tracker-view" id="tracker-view" aria-labelledby="tracker-title" hidden>
+    <div class="profile-card">
+      <h1 id="tracker-title">Your daily limit</h1>
+      <p class="placeholder-limit"><strong id="placeholder-grams">0</strong> g of added sugar</p>
+      <p class="lede">The tracker is coming in the next step.</p>
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "treat-yourself",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A cute, guilt-free added-sugar tracker for people who are prediabetic.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,201 @@
+/* Treat Yourself: pastel candy-shop styling.
+   Fonts: Fredoka (headings, numbers), Nunito (body), Pacifico (logo only). */
+
+:root {
+  --cream: #fff7f2;
+  --card: #ffffff;
+  --ink: #4a3340;
+  --ink-soft: #745a69;
+  --line: #f3dcd5;
+
+  --pink: #ff9ec4;
+  --pink-deep: #f06ea9;
+  --pink-ink: #c2367a;
+  --lilac: #c9b3f2;
+  --mint: #8fd8c4;
+  --butter: #ffd98e;
+  --peach: #ffb08a;
+  --rose: #f0768c;
+
+  --bg-a: #ffe1ee;
+  --bg-b: #efe4ff;
+  --tint: #ffeef5;
+
+  --font-body: "Nunito", ui-rounded, "Segoe UI", system-ui, sans-serif;
+  --font-display: "Fredoka", "Nunito", ui-rounded, system-ui, sans-serif;
+  --font-logo: "Pacifico", "Fredoka", cursive;
+
+  --radius: 28px;
+  --radius-sm: 18px;
+  --shadow: 0 12px 32px rgba(190, 120, 150, .14);
+  --shadow-sm: 0 4px 14px rgba(190, 120, 150, .12);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--ink);
+  line-height: 1.5;
+  background:
+    radial-gradient(circle at 8% 0%, var(--bg-a), transparent 55%),
+    radial-gradient(circle at 92% 8%, var(--bg-b), transparent 50%),
+    var(--cream);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; line-height: 1.2; }
+button { font: inherit; cursor: pointer; }
+a { color: var(--pink-ink); }
+
+[hidden] { display: none !important; }
+
+/* ---------- floating hearts ---------- */
+.sky { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+.sky span {
+  position: absolute;
+  left: var(--x);
+  bottom: -2rem;
+  font-size: var(--s);
+  color: var(--pink);
+  opacity: .55;
+  animation: drift var(--d) linear var(--delay) infinite;
+}
+.sky span:nth-child(3n) { color: var(--lilac); }
+@keyframes drift {
+  from { transform: translateY(0) rotate(0deg); }
+  to   { transform: translateY(-115vh) rotate(160deg); }
+}
+
+main { position: relative; z-index: 1; }
+
+/* ---------- shared bits ---------- */
+.logo {
+  font-family: var(--font-logo);
+  font-size: clamp(1.8rem, 5vw, 2.3rem);
+  color: var(--pink-deep);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.primary-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: .85rem 1.8rem;
+  background: linear-gradient(135deg, var(--pink), var(--pink-deep));
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+.primary-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--shadow); }
+.primary-btn:active:not(:disabled) { transform: translateY(1px); }
+.primary-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+:focus-visible { outline: 3px solid var(--lilac); outline-offset: 2px; }
+
+.fine-print { margin: 1rem 0 0; font-size: .82rem; color: var(--ink-soft); }
+
+/* ---------- profile screen ---------- */
+.view { padding: clamp(1.25rem, 4vw, 3rem) 16px 3rem; }
+
+.profile-card {
+  max-width: 560px;
+  margin: 0 auto;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  text-align: center;
+}
+
+.profile-honey { width: 132px; height: 132px; margin: -.5rem auto .25rem; }
+.profile-honey svg { width: 100%; height: 100%; }
+
+.profile-card h1 { font-size: clamp(1.35rem, 4.2vw, 1.7rem); margin-top: .5rem; }
+.lede { margin: .5rem 0 0; color: var(--ink-soft); }
+
+.question { border: 0; margin: 1.6rem 0 0; padding: 0; }
+.question legend { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; margin: 0 auto .7rem; padding: 0; }
+
+.choices { display: flex; flex-wrap: wrap; justify-content: center; gap: .55rem; }
+.choice { position: relative; }
+.choice input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.choice span {
+  display: inline-block;
+  padding: .6rem 1.15rem;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  background: var(--card);
+  font-weight: 700;
+  color: var(--ink-soft);
+  transition: background .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
+}
+.choice:hover span { border-color: var(--pink); }
+.choice input:checked + span {
+  background: var(--tint);
+  border-color: var(--pink-deep);
+  color: var(--pink-ink);
+  transform: scale(1.04);
+}
+.choice input:focus-visible + span { outline: 3px solid var(--lilac); outline-offset: 2px; }
+
+.limit-result {
+  margin: 1.8rem 0 1.4rem;
+  padding: 1.2rem 1.25rem;
+  border-radius: var(--radius-sm);
+  background: var(--tint);
+  border: 2px dashed var(--pink);
+  min-height: 5.5rem;
+  display: grid;
+  place-items: center;
+}
+.limit-waiting { margin: 0; color: var(--ink-soft); font-weight: 600; }
+.limit-label { margin: 0; font-weight: 700; color: var(--ink-soft); font-size: .9rem; }
+.limit-number {
+  margin: .1rem 0 .25rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.6rem, 9vw, 3.2rem);
+  color: var(--pink-ink);
+  line-height: 1.05;
+}
+.limit-number small { font-size: .45em; font-weight: 600; color: var(--ink-soft); }
+.limit-reason { margin: .35rem 0 0; font-size: .92rem; color: var(--ink); text-align: left; }
+.limit-sources { margin: .6rem 0 0; padding: 0; list-style: none; font-size: .85rem; text-align: left; }
+.limit-sources li + li { margin-top: .2rem; }
+.limit-sources li::before { content: "📎 "; }
+.badge {
+  display: inline-block;
+  margin-top: .15rem;
+  padding: .2rem .7rem;
+  border-radius: 999px;
+  background: var(--butter);
+  color: #6b4a12;
+  font-size: .78rem;
+  font-weight: 800;
+}
+.limit-result.is-set { animation: pop .35s ease; }
+@keyframes pop {
+  0% { transform: scale(.97); }
+  60% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.start-btn { width: 100%; max-width: 320px; }
+
+.placeholder-limit { font-size: 1.2rem; margin: 1rem 0 0; }
+.placeholder-limit strong { font-family: var(--font-display); font-size: 2.4rem; color: var(--pink-ink); }
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .sky span { animation: none; display: none; }
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
