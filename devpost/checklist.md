@@ -9,7 +9,7 @@ Build mode: fast
 
 ## Slices
 
-- [ ] **1. Answer two questions and see your personal, sourced limit**
+- [x] **1. Answer two questions and see your personal, sourced limit**
   Becomes usable: Opening the app shows the Profile screen with Candy jar Honey, in the Treat Yourself look. Picking sex and prediabetic status instantly shows the recommended limit, the reason, and a source link. **Start tracking** turns on only when both are answered, and goes to a simple tracker placeholder that shows the chosen limit.
   Why now: This is the kernel. The personalized, sourced limit is the hook and the demo's "oh, that's cool" moment. It also sets up everything else: page shell, fonts and colors, Honey, the rules file, and the test runner.
   PRD ref: `prd.md > The Core Journey` (steps 1–3), `prd.md > Profile and Recommended Limit`, `prd.md > Look and Feel`
@@ -143,3 +143,5 @@ Reflection:
 Activity mode: 
 
 ## Revisions
+
+- `recommendedLimit()` returns `sources` (a list) instead of a single `source` — the prediabetic limit cites two sources (WHO and AHA), so one field couldn't hold both.
