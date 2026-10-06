@@ -67,12 +67,66 @@
     </div>
   </section>
 
-  <!-- Tracker screen (slice 2 builds this out) -->
+  <!-- Tracker screen -->
   <section class="view tracker-view" id="tracker-view" aria-labelledby="tracker-title" hidden>
-    <div class="profile-card">
-      <h1 id="tracker-title">Your daily limit</h1>
-      <p class="placeholder-limit"><strong id="placeholder-grams">0</strong> g of added sugar</p>
-      <p class="lede">The tracker is coming in the next step.</p>
+
+    <header class="site-header">
+      <div class="brand">
+        <span class="brand-honey" id="brand-honey"></span>
+        <div>
+          <h1 class="logo" id="tracker-title">Treat Yourself</h1>
+          <p class="tagline">Noticing added sugar, without the guilt</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <p class="today-label" id="today-label"></p>
+        <button type="button" class="ghost-btn" id="goal-btn" aria-expanded="false" aria-controls="goal-panel">⚙︎ Daily goal</button>
+      </div>
+    </header>
+
+    <div class="tracker-layout">
+
+      <aside class="panel scale-panel" aria-labelledby="scale-heading">
+        <h2 id="scale-heading">Sugar scale</h2>
+        <div class="scale-body">
+          <div class="scale-honey-wrap">
+            <div class="scale-honey" id="scale-honey"></div>
+            <p class="honey-says" id="honey-says" aria-live="polite"></p>
+          </div>
+          <div class="tube" id="scale-tube" role="meter" aria-labelledby="scale-heading" aria-valuemin="0">
+            <div class="tube-fill" id="scale-fill"></div>
+            <div class="goal-line" id="goal-line"><span id="goal-line-label">goal</span></div>
+          </div>
+          <div class="readout">
+            <p class="readout-main"><strong id="scale-total">0 g</strong> of <span id="scale-limit">0 g</span></p>
+            <p class="readout-sub" id="scale-left"></p>
+          </div>
+        </div>
+      </aside>
+
+      <div class="main-col">
+        <section class="panel picker" aria-labelledby="picker-heading">
+          <div class="panel-head">
+            <h2 id="picker-heading">Pick a treat</h2>
+            <p class="panel-sub">Tap a treat to add it</p>
+          </div>
+          <div class="tabs" role="tablist" aria-label="Treat categories" id="category-tabs"></div>
+          <div class="treat-grid" id="treat-grid" role="tabpanel"></div>
+        </section>
+
+        <section class="panel log" aria-labelledby="log-heading">
+          <div class="panel-head">
+            <h2 id="log-heading">Today's treats</h2>
+            <p class="log-total"><strong id="log-total">0 g</strong> added sugar</p>
+          </div>
+          <ul class="log-list" id="log-list"></ul>
+          <div class="log-empty" id="log-empty">
+            <span class="log-empty-honey" id="log-empty-honey"></span>
+            <p>Nothing yet today. Tap a treat to add it.</p>
+          </div>
+        </section>
+      </div>
+
     </div>
   </section>
 

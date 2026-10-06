@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { recommendedLimit, SOURCES } from "../js/logic.js";
+import { recommendedLimit, scaleState, SOURCES } from "../js/logic.js";
 
 test("recommendedLimit waits until both questions are answered", () => {
   assert.equal(recommendedLimit({}), null);
@@ -43,4 +43,53 @@ test("every limit cites a real https source", () => {
     }
   }
   assert.deepEqual(recommendedLimit({ sex: "male", prediabetic: "yes" }).sources, [SOURCES.who, SOURCES.aha]);
+});
+
+test("scaleState: 10 g of a 25 g limit", () => {
+  const s = scaleState(10, 25);
+  assert.equal(s.pct, 40);
+  assert.equal(s.left, 15);
+  assert.equal(s.over, 0);
+  assert.equal(s.level, "low");
+  assert.equal(s.mood, "happy");
+  assert.equal(s.color, "butter");
+  assert.equal(s.fillPct, 32); // 10 / (25 * 1.25)
+  assert.equal(s.goalPct, 80);
+});
+
+test("scaleState: empty, close, at, and over the limit", () => {
+  const empty = scaleState(0, 25);
+  assert.equal(empty.level, "empty");
+  assert.equal(empty.mood, "peek");
+  assert.equal(empty.color, "mint");
+  assert.equal(empty.fillPct, 0);
+
+  const close = scaleState(20, 25);
+  assert.equal(close.level, "mid");
+  assert.equal(close.mood, "content");
+  assert.equal(close.color, "peach");
+
+  const at = scaleState(25, 25);
+  assert.equal(at.atLimit, true);
+  assert.equal(at.level, "over");
+  assert.equal(at.mood, "ohmy");
+  assert.equal(at.left, 0);
+  assert.equal(at.over, 0);
+
+  const over = scaleState(30, 25);
+  assert.equal(over.over, 5);
+  assert.equal(over.left, 0);
+  assert.equal(over.color, "rose");
+  assert.equal(over.fillPct, 96);
+
+  assert.equal(scaleState(100, 25).fillPct, 100, "fill never spills out of the tube");
+});
+
+test("scaleState: color steps at 40, 70, and 100 percent", () => {
+  assert.equal(scaleState(9, 25).color, "mint"); // 36%
+  assert.equal(scaleState(10, 25).color, "butter"); // 40%
+  assert.equal(scaleState(17, 25).color, "butter"); // 68%
+  assert.equal(scaleState(18, 25).color, "peach"); // 72%
+  assert.equal(scaleState(24, 25).color, "peach"); // 96%
+  assert.equal(scaleState(25, 25).color, "rose"); // 100%
 });

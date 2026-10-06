@@ -1,13 +1,20 @@
 // Treat Yourself: wires the page together. Rules live in logic.js; Honey lives in honey.js.
-import { recommendedLimit } from "./logic.js";
+import { recommendedLimit, scaleState } from "./logic.js";
 import { honeySVG } from "./honey.js";
+import { TREATS, CATEGORIES } from "./treats.js";
 
 const $ = (id) => document.getElementById(id);
 
 const state = {
   profile: { sex: null, prediabetic: null },
   goal: null, // { mode: "recommended" | "custom", grams }
+  log: [], // [{ id, treatId, name, emoji, grams, at }]
+  category: CATEGORIES[0],
 };
+
+function escapeHTML(text) {
+  return String(text).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+}
 
 // ---------- profile screen ----------
 
@@ -16,10 +23,6 @@ const form = $("profile-form");
 function readProfileForm() {
   const data = new FormData(form);
   return { sex: data.get("sex"), prediabetic: data.get("prediabetic") };
-}
-
-function escapeHTML(text) {
-  return String(text).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 }
 
 function renderLimitResult(limit) {
@@ -64,6 +67,149 @@ form.addEventListener("submit", (event) => {
   showTracker();
 });
 
+// ---------- treat picker ----------
+
+function renderTabs() {
+  $("category-tabs").innerHTML = CATEGORIES.map(
+    (cat) =>
+      `<button type="button" class="tab" role="tab" data-category-tab="${escapeHTML(cat)}" aria-selected="${cat === state.category}">${escapeHTML(cat)}</button>`,
+  ).join("");
+}
+
+function renderTreats() {
+  const treats = TREATS.filter((t) => t.category === state.category);
+  $("treat-grid").innerHTML = treats
+    .map(
+      (t) => `
+      <div class="treat-card" data-category="${escapeHTML(t.category)}">
+        <button type="button" class="treat-add" data-treat="${t.id}" aria-label="Add ${escapeHTML(t.name)}, ${t.addedSugarG} grams of added sugar">
+          <span class="treat-emoji" aria-hidden="true">${t.emoji}</span>
+          <span class="treat-name">${escapeHTML(t.name)}</span>
+          <span class="treat-serving">${escapeHTML(t.serving)}</span>
+          <span class="treat-sugar">${t.addedSugarG} g added sugar</span>
+        </button>
+      </div>`,
+    )
+    .join("");
+}
+
+$("category-tabs").addEventListener("click", (event) => {
+  const tab = event.target.closest("[data-category-tab]");
+  if (!tab) return;
+  state.category = tab.dataset.categoryTab;
+  renderTabs();
+  renderTreats();
+});
+
+$("treat-grid").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-treat]");
+  if (!button) return;
+  const treat = TREATS.find((t) => t.id === button.dataset.treat);
+  if (!treat) return;
+  logTreat(treat);
+  button.classList.remove("just-added");
+  void button.offsetWidth;
+  button.classList.add("just-added");
+});
+
+// ---------- today's log ----------
+
+function logTreat(treat) {
+  state.log.push({
+    id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+    treatId: treat.id,
+    name: treat.name,
+    emoji: treat.emoji,
+    grams: treat.addedSugarG,
+    at: new Date().toISOString(),
+  });
+  renderLog();
+  renderScale({ wave: true });
+}
+
+function removeEntry(id) {
+  state.log = state.log.filter((entry) => entry.id !== id);
+  renderLog();
+  renderScale();
+}
+
+function todayTotal() {
+  return state.log.reduce((sum, entry) => sum + entry.grams, 0);
+}
+
+function formatTime(iso) {
+  return new Date(iso).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toLowerCase();
+}
+
+function renderLog() {
+  const list = $("log-list");
+  const entries = [...state.log].reverse(); // newest first
+  list.innerHTML = entries
+    .map(
+      (e) => `
+      <li class="log-item">
+        <span class="log-emoji" aria-hidden="true">${e.emoji}</span>
+        <span class="log-name">${escapeHTML(e.name)}<span class="log-time">${formatTime(e.at)}</span></span>
+        <span class="log-grams">${e.grams} g</span>
+        <button type="button" class="remove-btn" data-remove="${e.id}" aria-label="Remove ${escapeHTML(e.name)}">✕</button>
+      </li>`,
+    )
+    .join("");
+  $("log-empty").hidden = entries.length > 0;
+  $("log-total").textContent = `${todayTotal()} g`;
+}
+
+$("log-list").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-remove]");
+  if (button) removeEntry(button.dataset.remove);
+});
+
+// ---------- sugar scale + Honey ----------
+
+function honeyMessage(scale) {
+  if (scale.level === "empty") return "Hi! Tap a treat and I'll keep count.";
+  if (scale.level === "low") return "Sweet! Plenty of room left today.";
+  if (scale.level === "mid") return "Getting close. Just something to notice.";
+  if (scale.atLimit) return "Right at your limit. Nicely noticed!";
+  return `Oh my! ${scale.over} g over today. That's okay, tomorrow's a fresh start. 🌸`;
+}
+
+let lastMood = null;
+
+function renderScale({ wave = false } = {}) {
+  const scale = scaleState(todayTotal(), state.goal.grams);
+
+  const tube = $("scale-tube");
+  tube.dataset.color = scale.color;
+  tube.setAttribute("aria-valuemax", String(scale.limit));
+  tube.setAttribute("aria-valuenow", String(scale.total));
+  tube.setAttribute("aria-valuetext", `${scale.total} grams of ${scale.limit} gram daily limit`);
+  $("scale-fill").style.height = `${scale.fillPct}%`;
+  $("goal-line").style.bottom = `${scale.goalPct}%`;
+  $("goal-line-label").textContent = `${scale.limit} g goal`;
+
+  $("scale-total").textContent = `${scale.total} g`;
+  $("scale-limit").textContent = `${scale.limit} g`;
+  let sub = `${scale.left} g left`;
+  if (scale.atLimit) sub = "Right at your limit";
+  else if (scale.over > 0) sub = `${scale.over} g over`;
+  $("scale-left").textContent = sub;
+
+  const honeyBox = $("scale-honey");
+  if (scale.mood !== lastMood) {
+    honeyBox.innerHTML = honeySVG(scale.mood, { label: true });
+    $("log-empty-honey").innerHTML = honeySVG("peek");
+    lastMood = scale.mood;
+  }
+  $("honey-says").textContent = honeyMessage(scale);
+
+  if (wave) {
+    honeyBox.classList.remove("is-waving");
+    void honeyBox.offsetWidth;
+    honeyBox.classList.add("is-waving");
+  }
+}
+
 // ---------- views ----------
 
 function showProfile() {
@@ -76,7 +222,12 @@ function showProfile() {
 function showTracker() {
   $("profile-view").hidden = true;
   $("tracker-view").hidden = false;
-  $("placeholder-grams").textContent = state.goal.grams;
+  $("brand-honey").innerHTML = honeySVG("happy", { jar: false });
+  $("today-label").textContent = new Date().toLocaleDateString([], { weekday: "long", month: "short", day: "numeric" });
+  renderTabs();
+  renderTreats();
+  renderLog();
+  renderScale();
   window.scrollTo(0, 0);
 }
 

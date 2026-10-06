@@ -60,3 +60,41 @@ export function recommendedLimit({ sex, prediabetic } = {}) {
     general: false,
   };
 }
+
+// ---------- sugar scale ----------
+
+// The tube shows a little room past the goal, so going over is visible above the dashed line.
+export const SCALE_HEADROOM = 1.25;
+
+const MOOD_FOR_LEVEL = { empty: "peek", low: "happy", mid: "content", over: "ohmy" };
+
+// Everything the scale, readout, and Honey need from today's total and the daily limit.
+export function scaleState(total, limit) {
+  const safeTotal = Math.max(Number(total) || 0, 0);
+  const safeLimit = Math.max(Number(limit) || 0, 1);
+  const pct = (safeTotal / safeLimit) * 100;
+
+  let level = "over";
+  if (safeTotal === 0) level = "empty";
+  else if (pct < 50) level = "low";
+  else if (pct < 100) level = "mid";
+
+  let color = "rose";
+  if (pct < 40) color = "mint";
+  else if (pct < 70) color = "butter";
+  else if (pct < 100) color = "peach";
+
+  return {
+    total: safeTotal,
+    limit: safeLimit,
+    pct: Math.round(pct),
+    fillPct: Math.min((safeTotal / (safeLimit * SCALE_HEADROOM)) * 100, 100),
+    goalPct: 100 / SCALE_HEADROOM,
+    left: Math.max(safeLimit - safeTotal, 0),
+    over: Math.max(safeTotal - safeLimit, 0),
+    atLimit: safeTotal === safeLimit,
+    level,
+    color,
+    mood: MOOD_FOR_LEVEL[level],
+  };
+}
