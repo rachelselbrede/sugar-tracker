@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { recommendedLimit, scaleState, todayKey, SOURCES } from "../js/logic.js";
+import { recommendedLimit, scaleState, todayKey, isValidGoal, SOURCES } from "../js/logic.js";
 
 test("recommendedLimit waits until both questions are answered", () => {
   assert.equal(recommendedLimit({}), null);
@@ -105,4 +105,14 @@ test("todayKey changes across midnight", () => {
   const beforeMidnight = new Date(2026, 9, 10, 23, 59, 59);
   const afterMidnight = new Date(2026, 9, 11, 0, 0, 1);
   assert.notEqual(todayKey(beforeMidnight), todayKey(afterMidnight));
+});
+
+test("isValidGoal accepts whole numbers from 1 to 300, including typed text", () => {
+  for (const ok of [1, 25, 36, 300, "30", " 36 ", "300"]) assert.equal(isValidGoal(ok), true, String(ok));
+});
+
+test("isValidGoal rejects 0, negatives, blanks, over 300, decimals, and junk", () => {
+  for (const bad of [0, -5, "", "   ", 301, 2.5, "2.5", "0", "-5", "301", "abc", null, undefined, NaN, Infinity, "1e400", true]) {
+    assert.equal(isValidGoal(bad), false, String(bad));
+  }
 });

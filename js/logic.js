@@ -108,3 +108,17 @@ export function todayKey(date = new Date()) {
   const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
+
+// ---------- goal validation ----------
+
+export const GOAL_MIN = 1;
+export const GOAL_MAX = 300;
+
+// A custom daily goal must be a whole number of grams from 1 to 300. Accepts the raw text from an input.
+export function isValidGoal(value) {
+  if (typeof value === "string") {
+    if (value.trim() === "") return false;
+    value = Number(value);
+  }
+  return Number.isInteger(value) && value >= GOAL_MIN && value <= GOAL_MAX;
+}

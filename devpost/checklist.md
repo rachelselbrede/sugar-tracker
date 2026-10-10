@@ -85,7 +85,7 @@ Build mode: fast
   Learner check: Set up, log a couple of treats, close the tab, and reopen it. Are you back where you left off?
   Commit: `Persist profile, goal, and today's log with daily reset`
 
-- [ ] **5. Change your goal or your profile any time**
+- [x] **5. Change your goal or your profile any time**
   Becomes usable: The **⚙︎ Daily goal** panel shows the current goal and its basis. You can save a custom number, use the 25, 36, or 50 g quick buttons, go back to your recommended limit, or edit your profile. Editing the profile resets the goal and says so. Bad entries get a gentle message.
   Why now: This builds on persistence, and it's the last PRD behavior. It finishes "customizable if they wish."
   PRD ref: `prd.md > Daily Goal Panel`, `prd.md > States and Boundaries` (changing the profile)

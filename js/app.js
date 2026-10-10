@@ -1,5 +1,5 @@
 // Treat Yourself: wires the page together. Rules live in logic.js; Honey lives in honey.js.
-import { recommendedLimit, scaleState, todayKey } from "./logic.js";
+import { recommendedLimit, scaleState, todayKey, isValidGoal } from "./logic.js";
 import { storageAvailable, loadProfile, saveProfile, loadGoal, saveGoal, loadLog, saveLog } from "./storage.js";
 import { honeySVG } from "./honey.js";
 import { TREATS, CATEGORIES, CHECKED } from "./treats.js";
@@ -12,6 +12,7 @@ const state = {
   log: [], // [{ id, treatId, name, emoji, grams, at }]
   day: todayKey(), // which day the log belongs to
   category: CATEGORIES[0],
+  editing: false, // true while the Profile screen is open from "Edit profile"
 };
 
 const canSave = storageAvailable();
@@ -70,14 +71,95 @@ form.addEventListener("submit", (event) => {
   const profile = readProfileForm();
   const limit = recommendedLimit(profile);
   if (!limit) return;
+  const wasEditing = state.editing;
   state.profile = profile;
-  state.goal = { mode: "recommended", grams: limit.grams };
+  state.goal = { mode: "recommended", grams: limit.grams }; // a profile change always resets the goal
   if (canSave) {
     saveProfile(state.profile);
     saveGoal(state.goal);
   }
   showTracker();
+  if (wasEditing) {
+    toggleGoalPanel(true);
+    showGoalNote(`Profile saved. Your goal is back to your recommended limit: ${limit.grams} g a day.`);
+  }
 });
+
+$("cancel-edit").addEventListener("click", () => showTracker());
+
+// ---------- daily goal panel ----------
+
+const goalPanel = $("goal-panel");
+const goalBtn = $("goal-btn");
+
+function renderGoalPanel() {
+  const basis = state.goal.mode === "custom" ? "custom goal" : "recommended from your profile";
+  $("goal-current").textContent = `${state.goal.grams} g · ${basis}`;
+  $("use-recommended").disabled = state.goal.mode === "recommended";
+  for (const chip of goalPanel.querySelectorAll("[data-preset]")) {
+    const pressed = state.goal.mode === "custom" && Number(chip.dataset.preset) === state.goal.grams;
+    chip.setAttribute("aria-pressed", String(pressed));
+  }
+}
+
+function showGoalNote(text) {
+  const note = $("goal-note");
+  note.textContent = text || "";
+  note.hidden = !text;
+}
+
+function setGoal(goal, note) {
+  state.goal = goal;
+  if (canSave) saveGoal(goal);
+  $("goal-input").value = "";
+  $("goal-error").hidden = true;
+  showGoalNote(note);
+  renderGoalPanel();
+  renderScale();
+}
+
+function toggleGoalPanel(open = goalPanel.hidden) {
+  goalPanel.hidden = !open;
+  goalBtn.setAttribute("aria-expanded", String(open));
+  if (open) {
+    renderGoalPanel();
+  } else {
+    showGoalNote("");
+    $("goal-error").hidden = true;
+  }
+}
+
+goalBtn.addEventListener("click", () => toggleGoalPanel());
+
+$("goal-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const raw = $("goal-input").value;
+  if (!isValidGoal(raw)) {
+    $("goal-error").hidden = false;
+    $("goal-input").focus();
+    return;
+  }
+  setGoal({ mode: "custom", grams: Number(raw) }, `Goal set to ${Number(raw)} g a day.`);
+});
+
+$("goal-input").addEventListener("input", () => {
+  $("goal-error").hidden = true;
+});
+
+goalPanel.addEventListener("click", (event) => {
+  const chip = event.target.closest("[data-preset]");
+  if (!chip) return;
+  const grams = Number(chip.dataset.preset);
+  setGoal({ mode: "custom", grams }, `Goal set to ${grams} g a day.`);
+});
+
+$("use-recommended").addEventListener("click", () => {
+  const limit = recommendedLimit(state.profile);
+  if (!limit) return;
+  setGoal({ mode: "recommended", grams: limit.grams }, `Back to your recommended limit: ${limit.grams} g a day.`);
+});
+
+$("edit-profile").addEventListener("click", () => showProfile({ editing: true }));
 
 // ---------- treat picker ----------
 
@@ -265,14 +347,30 @@ function renderScale({ wave = false } = {}) {
 
 // ---------- views ----------
 
-function showProfile() {
+function showProfile({ editing = false } = {}) {
+  state.editing = editing;
   $("tracker-view").hidden = true;
   $("profile-view").hidden = false;
   $("profile-honey").innerHTML = honeySVG("happy", { label: "Honey the bear waving hello from her candy jar" });
+  $("profile-title").textContent = editing ? "Update your profile" : "Let's find your daily sugar limit";
+  $("profile-lede").textContent = editing
+    ? "Change an answer and your goal resets to the new recommended limit."
+    : "Two quick questions. Your answers stay on this device.";
+  $("start-btn").textContent = editing ? "Save profile" : "Start tracking";
+  $("cancel-edit").hidden = !editing;
+  form.reset();
+  if (editing) {
+    for (const [name, value] of Object.entries(state.profile)) {
+      const input = form.querySelector(`input[name="${name}"][value="${value}"]`);
+      if (input) input.checked = true;
+    }
+  }
   onProfileChange();
+  window.scrollTo(0, 0);
 }
 
 function showTracker() {
+  state.editing = false;
   $("profile-view").hidden = true;
   $("tracker-view").hidden = false;
   $("brand-honey").innerHTML = honeySVG("happy", { jar: false });

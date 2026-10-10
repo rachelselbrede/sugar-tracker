@@ -39,7 +39,7 @@
       <div class="profile-honey" id="profile-honey"></div>
       <p class="logo">Treat Yourself</p>
       <h1 id="profile-title">Let's find your daily sugar limit</h1>
-      <p class="lede">Two quick questions. Your answers stay on this device.</p>
+      <p class="lede" id="profile-lede">Two quick questions. Your answers stay on this device.</p>
 
       <form id="profile-form" novalidate>
         <fieldset class="question">
@@ -65,6 +65,7 @@
         </div>
 
         <button type="submit" class="primary-btn start-btn" id="start-btn" disabled>Start tracking</button>
+        <button type="button" class="ghost-btn cancel-edit" id="cancel-edit" hidden>Cancel</button>
       </form>
 
       <p class="fine-print">General guidance, not medical advice.</p>
@@ -87,6 +88,33 @@
         <button type="button" class="ghost-btn" id="goal-btn" aria-expanded="false" aria-controls="goal-panel">⚙︎ Daily goal</button>
       </div>
     </header>
+
+    <!-- Daily goal panel: opened by the ⚙︎ Daily goal button -->
+    <section class="panel goal-panel" id="goal-panel" aria-labelledby="goal-heading" hidden>
+      <div class="panel-head">
+        <h2 id="goal-heading">Daily goal</h2>
+        <p class="panel-sub" id="goal-current"></p>
+      </div>
+      <p class="goal-note" id="goal-note" role="status" hidden></p>
+      <form class="goal-form" id="goal-form" novalidate>
+        <label class="goal-label" for="goal-input">Set your own number</label>
+        <div class="goal-row">
+          <input class="goal-input" id="goal-input" name="grams" type="number" inputmode="numeric" min="1" max="300" step="1" placeholder="30">
+          <span class="goal-unit">g a day</span>
+          <button type="submit" class="primary-btn goal-save">Save</button>
+        </div>
+        <p class="goal-error" id="goal-error" role="alert" hidden>Pick a whole number from 1 to 300.</p>
+      </form>
+      <div class="goal-presets" role="group" aria-label="Quick goals">
+        <button type="button" class="chip" data-preset="25" aria-pressed="false">25 g <small>AHA · women</small></button>
+        <button type="button" class="chip" data-preset="36" aria-pressed="false">36 g <small>AHA · men</small></button>
+        <button type="button" class="chip" data-preset="50" aria-pressed="false">50 g <small>FDA Daily Value</small></button>
+      </div>
+      <div class="goal-actions">
+        <button type="button" class="ghost-btn" id="use-recommended">Use my recommended limit</button>
+        <button type="button" class="ghost-btn" id="edit-profile">Edit profile</button>
+      </div>
+    </section>
 
     <div class="tracker-layout">
 

@@ -234,6 +234,58 @@ main { position: relative; z-index: 1; }
 }
 .ghost-btn:hover { border-color: var(--pink); background: var(--tint); }
 
+.ghost-btn:disabled { opacity: .5; cursor: not-allowed; }
+.ghost-btn:disabled:hover { border-color: var(--line); background: var(--card); }
+.cancel-edit { margin-top: .7rem; }
+
+/* ---------- daily goal panel ---------- */
+.goal-panel { margin-bottom: 1.25rem; animation: slide-in .25s ease; }
+.goal-note {
+  margin: 0 0 .9rem;
+  padding: .6rem .9rem;
+  border-radius: var(--radius-sm);
+  background: var(--tint);
+  font-weight: 700;
+  font-size: .9rem;
+}
+.goal-form { margin: 0 0 1rem; }
+.goal-label { display: block; font-weight: 700; font-size: .9rem; margin-bottom: .4rem; }
+.goal-row { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+.goal-input {
+  width: 6.5rem;
+  padding: .55rem .9rem;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ink);
+  background: var(--card);
+}
+.goal-input:focus { outline: 3px solid var(--lilac); outline-offset: 2px; border-color: var(--pink); }
+.goal-unit { color: var(--ink-soft); font-weight: 600; font-size: .9rem; }
+.goal-save { padding: .6rem 1.3rem; font-size: .95rem; }
+.goal-error { margin: .5rem 0 0; font-size: .88rem; font-weight: 700; color: var(--pink-ink); }
+.goal-presets { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+.chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.15;
+  border: 2px solid var(--line);
+  background: var(--card);
+  border-radius: 999px;
+  padding: .45rem 1rem;
+  font-weight: 800;
+  color: var(--ink);
+  transition: border-color .15s ease, background .15s ease;
+}
+.chip small { font-weight: 600; color: var(--ink-soft); font-size: .72rem; }
+.chip:hover { border-color: var(--pink); background: var(--tint); }
+.chip[aria-pressed="true"] { background: var(--pink-deep); border-color: var(--pink-deep); color: #fff; }
+.chip[aria-pressed="true"] small { color: #fff; }
+.goal-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+
 /* ---------- tracker: layout ---------- */
 .tracker-layout {
   display: grid;
