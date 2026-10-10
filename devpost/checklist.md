@@ -132,15 +132,16 @@ Build mode: fast
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
+- [x] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence: 
-Route and stops: 
-Edit outcome: 
-Reflection: 
-Activity mode: 
+Activity and evidence: Brief recap, at the learner's request to keep things simple. The practice connected is "write the failure mode down, then test it with garbage": `spec.md > Important Failure Modes` ("saved data is corrupt or an old shape → start fresh at the Profile screen") became `tests/storage.test.js` ("garbage and wrong shapes read as null instead of throwing") and the slice 4 browser check (garbage in `ty.profile`, reload, Profile screen with no error). Delivered in the final build message on 2026-10-10.
+Route and stops: Reference route only (not toured): `js/app.js` logTreat → `js/logic.js` scaleState → `js/app.js` renderScale, with storage in a collapsible note. Recorded in the map as a reference route.
+Edit outcome: Not offered as an exercise; the learner asked to keep the finish simple.
+Reflection: One optional question offered in the final build message ("what would you do differently next time you start with an agent?"); answering is optional.
+Activity mode: brief recap
+Map: `devpost/app-map.html`, generated from the code at commit 169fb39, checked in the browser (no scripts, no external references, no horizontal scroll at phone width, diagram renders).
 
 ## Revisions
 
@@ -151,3 +152,8 @@ Activity mode:
 - The early hands-on checkpoint moved from after slice 2 to after slice 3. The treat research had already landed in slice 2, which left slice 3 as a small step (the ⓘ popup and a data test), so one pause covers the core loop and the sources together. The build resumed in a new session on 2026-10-10 with the slice-2 checkpoint still unchecked, and the learner is short on time.
 - Reduced motion was verified by reading the `prefers-reduced-motion` rule in `styles.css` (it hides the floating hearts and stops every animation) and by confirming the animations run normally without it. The browser tools in this session can't toggle the OS setting, so the rule wasn't exercised live.
 - The learner chose on 2026-10-10 to skip the early hands-on checkpoint and build slices 4–6 straight through, to save time before the deadline. One final hands-on check covers the whole journey instead.
+- Independent review on 2026-10-10, after slice 6: five reviewer agents (logic, plan conformance, accessibility and layout, data accuracy, submission readiness), with every finding checked by a reproduce lens and a plan-scope lens. 14 findings; 3 confirmed and fixed in commit 169fb39:
+  - A treat tapped in the minute after midnight on a tab left open was saved under yesterday and wiped by the next day check. `logTreat` and `removeEntry` now re-check the date first. Proven with a controlled-clock Node script before and after.
+  - The PRD's first journey step says Honey says hello; the Profile screen now opens with "Hi, I'm Honey!"
+  - The app map still had a placeholder commit hash; stamped and committed.
+  The other 11 were accurate but judged outside the proof-of-concept plan, and are worth a later pass: white text on pink buttons and the lilac focus ring are below WCAG AA contrast; the category tabs use tab roles without the arrow-key pattern; focus is lost when the tabs or log re-render; no live-region announcement of the new total; the goal error isn't linked to its input with aria-describedby; the ⓘ button is a 26 px target; `loadGoal` accepts a saved goal outside 1–300 (the form itself rejects it); the WHO source link is the 2015 press release rather than the guideline PDF; `.agents/` and `.claude/` are untracked tooling folders (handled in `6-ship`).
