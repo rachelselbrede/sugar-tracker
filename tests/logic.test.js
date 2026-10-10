@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { recommendedLimit, scaleState, SOURCES } from "../js/logic.js";
+import { recommendedLimit, scaleState, todayKey, SOURCES } from "../js/logic.js";
 
 test("recommendedLimit waits until both questions are answered", () => {
   assert.equal(recommendedLimit({}), null);
@@ -92,4 +92,17 @@ test("scaleState: color steps at 40, 70, and 100 percent", () => {
   assert.equal(scaleState(18, 25).color, "peach"); // 72%
   assert.equal(scaleState(24, 25).color, "peach"); // 96%
   assert.equal(scaleState(25, 25).color, "rose"); // 100%
+});
+
+test("todayKey formats local dates as YYYY-MM-DD", () => {
+  assert.equal(todayKey(new Date(2026, 9, 10, 23, 59)), "2026-10-10");
+  assert.equal(todayKey(new Date(2026, 0, 5, 0, 0)), "2026-01-05");
+  assert.equal(todayKey(new Date(2026, 11, 31)), "2026-12-31");
+  assert.match(todayKey(), /^\d{4}-\d{2}-\d{2}$/);
+});
+
+test("todayKey changes across midnight", () => {
+  const beforeMidnight = new Date(2026, 9, 10, 23, 59, 59);
+  const afterMidnight = new Date(2026, 9, 11, 0, 0, 1);
+  assert.notEqual(todayKey(beforeMidnight), todayKey(afterMidnight));
 });

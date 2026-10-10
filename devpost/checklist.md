@@ -66,7 +66,7 @@ Build mode: fast
   Learner check: Tap ⓘ on a few treats you know, such as a soda and a candy bar. Do the numbers and sources look right to you?
   Commit: `Add sourced treat list and source popup`
 
-- [ ] **4. It remembers you and starts fresh each day**
+- [x] **4. It remembers you and starts fresh each day**
   Becomes usable: Reloading or coming back skips straight to the tracker with your profile, goal, and today's log intact. After midnight the log clears, but the profile stays. If storage is blocked, the app still works, with a gentle note. If saved data is corrupt, it starts fresh instead of crashing.
   Why now: Persistence is what makes it a daily tracker rather than a one-off demo. It comes after the loop and data are settled, so the saved shapes match what the UI actually uses.
   PRD ref: `prd.md > The Core Journey` (step 7), `prd.md > States and Boundaries` (returning visit, new day, storage)

@@ -98,3 +98,13 @@ export function scaleState(total, limit) {
     mood: MOOD_FOR_LEVEL[level],
   };
 }
+
+// ---------- day key ----------
+
+// "YYYY-MM-DD" in the person's local time, so the log rolls over at their midnight, not UTC's.
+export function todayKey(date = new Date()) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}

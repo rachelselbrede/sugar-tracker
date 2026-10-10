@@ -1,5 +1,6 @@
 // Treat Yourself: wires the page together. Rules live in logic.js; Honey lives in honey.js.
-import { recommendedLimit, scaleState } from "./logic.js";
+import { recommendedLimit, scaleState, todayKey } from "./logic.js";
+import { storageAvailable, loadProfile, saveProfile, loadGoal, saveGoal, loadLog, saveLog } from "./storage.js";
 import { honeySVG } from "./honey.js";
 import { TREATS, CATEGORIES, CHECKED } from "./treats.js";
 
@@ -9,8 +10,15 @@ const state = {
   profile: { sex: null, prediabetic: null },
   goal: null, // { mode: "recommended" | "custom", grams }
   log: [], // [{ id, treatId, name, emoji, grams, at }]
+  day: todayKey(), // which day the log belongs to
   category: CATEGORIES[0],
 };
+
+const canSave = storageAvailable();
+
+function persistLog() {
+  if (canSave) saveLog({ day: state.day, items: state.log });
+}
 
 function escapeHTML(text) {
   return String(text).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -64,6 +72,10 @@ form.addEventListener("submit", (event) => {
   if (!limit) return;
   state.profile = profile;
   state.goal = { mode: "recommended", grams: limit.grams };
+  if (canSave) {
+    saveProfile(state.profile);
+    saveGoal(state.goal);
+  }
   showTracker();
 });
 
@@ -160,12 +172,14 @@ function logTreat(treat) {
     grams: treat.addedSugarG,
     at: new Date().toISOString(),
   });
+  persistLog();
   renderLog();
   renderScale({ wave: true });
 }
 
 function removeEntry(id) {
   state.log = state.log.filter((entry) => entry.id !== id);
+  persistLog();
   renderLog();
   renderScale();
 }
@@ -175,7 +189,9 @@ function todayTotal() {
 }
 
 function formatTime(iso) {
-  return new Date(iso).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toLowerCase();
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toLowerCase();
 }
 
 function renderLog() {
@@ -260,7 +276,7 @@ function showTracker() {
   $("profile-view").hidden = true;
   $("tracker-view").hidden = false;
   $("brand-honey").innerHTML = honeySVG("happy", { jar: false });
-  $("today-label").textContent = new Date().toLocaleDateString([], { weekday: "long", month: "short", day: "numeric" });
+  $("today-label").textContent = todayLabel();
   renderTabs();
   renderTreats();
   renderLog();
@@ -268,4 +284,50 @@ function showTracker() {
   window.scrollTo(0, 0);
 }
 
-showProfile();
+// ---------- start up, and start fresh each day ----------
+
+// If the saved log is from another day, today starts empty. The profile and goal stay.
+function checkDay() {
+  const today = todayKey();
+  if (today === state.day) return;
+  state.day = today;
+  state.log = [];
+  persistLog();
+  if (!$("tracker-view").hidden) {
+    $("today-label").textContent = todayLabel();
+    renderLog();
+    renderScale();
+  }
+}
+
+function todayLabel() {
+  return new Date().toLocaleDateString([], { weekday: "long", month: "short", day: "numeric" });
+}
+
+function init() {
+  $("storage-note").hidden = canSave;
+
+  const savedLog = canSave ? loadLog() : null;
+  if (savedLog && savedLog.day === state.day) {
+    state.log = savedLog.items;
+  } else if (savedLog) {
+    persistLog(); // yesterday's log: clear it
+  }
+
+  const profile = canSave ? loadProfile() : null;
+  const limit = profile ? recommendedLimit(profile) : null;
+  if (profile && limit) {
+    state.profile = profile;
+    state.goal = loadGoal() ?? { mode: "recommended", grams: limit.grams };
+    showTracker();
+  } else {
+    showProfile();
+  }
+
+  setInterval(checkDay, 60_000);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") checkDay();
+  });
+}
+
+init();
