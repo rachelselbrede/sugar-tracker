@@ -553,6 +553,10 @@ main { position: relative; z-index: 1; }
   50% { transform: translateY(-9px) rotate(-18deg); }
 }
 
+/* ---------- footer ---------- */
+.site-footer { margin: 1.75rem auto 0; max-width: 640px; padding: 0 .5rem; text-align: center; color: var(--ink-soft); font-size: .82rem; line-height: 1.5; }
+.site-footer p { margin: 0; }
+
 /* ---------- narrow screens: the scale sits above the picker ---------- */
 @media (max-width: 820px) {
   .tracker-layout { grid-template-columns: minmax(0, 1fr); }
@@ -569,6 +573,12 @@ main { position: relative; z-index: 1; }
 @media (max-width: 420px) {
   .treat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem; }
   .treat-add { padding: .75rem .7rem .8rem; }
+  .treat-name { font-size: .85rem; }
+  .site-header { gap: .5rem 1rem; }
+  .header-actions { width: 100%; justify-content: space-between; }
+  .goal-row { gap: .5rem; }
+  .goal-actions .ghost-btn { flex: 1 1 auto; text-align: center; }
+  .source-card { padding: 1.3rem 1.1rem 1.1rem; }
 }
 
 /* ---------- reduced motion ---------- */

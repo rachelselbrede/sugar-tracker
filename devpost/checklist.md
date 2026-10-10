@@ -103,7 +103,7 @@ Build mode: fast
   Learner check: Open Daily goal, set your own number, then switch back to recommended, then edit your profile. Does each change show up on the scale?
   Commit: `Add daily goal panel with custom goal and profile editing`
 
-- [ ] **6. Polished, phone-friendly, and documented**
+- [x] **6. Polished, phone-friendly, and documented**
   Becomes usable: The app looks right at phone width and on desktop, respects reduced motion, has the "not medical advice" footer, and has a README covering what it is, how to run and test it, sources, and the Honey disclosure.
   Why now: Final polish only makes sense once every behavior exists. The README has to describe the finished app for reviewers and the submission.
   PRD ref: `prd.md > Screens and Layout`, `prd.md > Look and Feel`, `prd.md > Non-Goals`
@@ -149,3 +149,5 @@ Activity mode:
 - Treat sources are grocery-store product pages (Stop & Shop, Giant, Giant Food, Hannaford, Food Lion) that show the full Nutrition Facts panel, including "Added Sugar." The spec preferred brand pages or USDA FoodData Central, but those didn't work: the USDA demo key was rate-limited (HTTP 429), brand sites didn't resolve, three research agents stalled, and Open Food Facts listed Snickers at 0 g added sugar, so it was rejected as unreliable. Each value was read off the live page on 2026-10-06.
 - The full 23-item list landed in slice 2, not slice 3, because the research had to happen before any treat could be shown. Dropped: Starbucks Doubleshot Espresso & Cream (has milk and no added-sugar line), Inotea Matcha Latte (its listing showed exactly the same numbers as the Brown Sugar flavor, so it looked copied and wasn't trusted), Pepsi's Stop & Shop page (blocked; Giant Food's page was used instead).
 - The early hands-on checkpoint moved from after slice 2 to after slice 3. The treat research had already landed in slice 2, which left slice 3 as a small step (the ⓘ popup and a data test), so one pause covers the core loop and the sources together. The build resumed in a new session on 2026-10-10 with the slice-2 checkpoint still unchecked, and the learner is short on time.
+- Reduced motion was verified by reading the `prefers-reduced-motion` rule in `styles.css` (it hides the floating hearts and stops every animation) and by confirming the animations run normally without it. The browser tools in this session can't toggle the OS setting, so the rule wasn't exercised live.
+- The learner chose on 2026-10-10 to skip the early hands-on checkpoint and build slices 4–6 straight through, to save time before the deadline. One final hands-on check covers the whole journey instead.
