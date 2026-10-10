@@ -246,6 +246,7 @@ sourceDialog.addEventListener("click", (event) => {
 // ---------- today's log ----------
 
 function logTreat(treat) {
+  checkDay(); // re-check the date at write time, so a tap just after midnight starts today's log
   state.log.push({
     id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
     treatId: treat.id,
@@ -260,6 +261,7 @@ function logTreat(treat) {
 }
 
 function removeEntry(id) {
+  checkDay();
   state.log = state.log.filter((entry) => entry.id !== id);
   persistLog();
   renderLog();
@@ -355,7 +357,7 @@ function showProfile({ editing = false } = {}) {
   $("profile-title").textContent = editing ? "Update your profile" : "Let's find your daily sugar limit";
   $("profile-lede").textContent = editing
     ? "Change an answer and your goal resets to the new recommended limit."
-    : "Two quick questions. Your answers stay on this device.";
+    : "Hi, I'm Honey! Two quick questions, and your answers stay on this device.";
   $("start-btn").textContent = editing ? "Save profile" : "Start tracking";
   $("cancel-edit").hidden = !editing;
   form.reset();
