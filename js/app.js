@@ -1,7 +1,7 @@
 // Treat Yourself: wires the page together. Rules live in logic.js; Honey lives in honey.js.
 import { recommendedLimit, scaleState } from "./logic.js";
 import { honeySVG } from "./honey.js";
-import { TREATS, CATEGORIES } from "./treats.js";
+import { TREATS, CATEGORIES, CHECKED } from "./treats.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -88,6 +88,7 @@ function renderTreats() {
           <span class="treat-serving">${escapeHTML(t.serving)}</span>
           <span class="treat-sugar">${t.addedSugarG} g added sugar</span>
         </button>
+        <button type="button" class="treat-info" data-info="${t.id}" aria-label="Where the number for ${escapeHTML(t.name)} comes from" title="Where this number comes from">ⓘ</button>
       </div>`,
     )
     .join("");
@@ -102,6 +103,12 @@ $("category-tabs").addEventListener("click", (event) => {
 });
 
 $("treat-grid").addEventListener("click", (event) => {
+  const info = event.target.closest("[data-info]");
+  if (info) {
+    const treat = TREATS.find((t) => t.id === info.dataset.info);
+    if (treat) openSource(treat);
+    return; // ⓘ never logs the treat
+  }
   const button = event.target.closest("[data-treat]");
   if (!button) return;
   const treat = TREATS.find((t) => t.id === button.dataset.treat);
@@ -110,6 +117,36 @@ $("treat-grid").addEventListener("click", (event) => {
   button.classList.remove("just-added");
   void button.offsetWidth;
   button.classList.add("just-added");
+});
+
+// ---------- source popup ----------
+
+const sourceDialog = $("source-dialog");
+
+function basisText(treat) {
+  if (treat.basis === "no-natural-sugar") {
+    return "All the sugar in this one is added. Only total sugar is published, but there's no milk, fruit, or juice in it, so total sugar and added sugar are the same.";
+  }
+  return "Read straight from the \"Includes Added Sugars\" line on the Nutrition Facts panel.";
+}
+
+function openSource(treat) {
+  $("source-title").textContent = treat.name;
+  $("source-serving").textContent = `Serving: ${treat.serving}`;
+  $("source-grams").textContent = `${treat.addedSugarG} g added sugar`;
+  $("source-basis").textContent = basisText(treat);
+  const link = $("source-url");
+  link.href = treat.source.url;
+  link.textContent = treat.source.name;
+  $("source-checked").textContent = `Checked against the source on ${CHECKED}.`;
+  sourceDialog.showModal();
+}
+
+$("source-close").addEventListener("click", () => sourceDialog.close());
+
+// Esc is handled by <dialog> itself. A click on the backdrop lands on the dialog element, not its card.
+sourceDialog.addEventListener("click", (event) => {
+  if (event.target === sourceDialog) sourceDialog.close();
 });
 
 // ---------- today's log ----------

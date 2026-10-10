@@ -49,7 +49,7 @@ Build mode: fast
   Learner check: Set a profile, then tap treats until you go over your limit and remove one. Watch the scale and Honey. What do you notice, and what would you change?
   Commit: `Add tracker with treat picker, today's log, sugar scale, and Honey moods`
 
-- [ ] **3. Every treat shows where its number came from**
+- [x] **3. Every treat shows where its number came from**
   Becomes usable: Each card has an ⓘ button that opens a source popup (name, serving, basis, link) without logging the treat. The treat list is complete at about 20–30 items, each checked against its source.
   Why now: Accuracy is half of the kernel. The full list is the riskiest research in the build, so it lands right after the core loop works, while there's still room to adjust.
   PRD ref: `prd.md > Treat Picker`, `prd.md > Product Decisions` (specific real products)
@@ -123,7 +123,7 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored, after slice 2 (core loop: profile → treats → scale and Honey)
+- [ ] Early usable behavior explored, after slice 3 (core loop: profile → treats → scale and Honey, plus the ⓘ source popups) — moved from after slice 2, see Revisions
 - [ ] Final kick-the-tires exploration and feedback completed
 
 ## Final Review
@@ -148,3 +148,4 @@ Activity mode:
 - The sugar tube shows 125% of the limit, so the dashed goal line sits at 80% height and going over is visible above it. The spec said fill `min(pct, 100)%`, which would have pinned the goal line to the very top, where nothing over the limit could show.
 - Treat sources are grocery-store product pages (Stop & Shop, Giant, Giant Food, Hannaford, Food Lion) that show the full Nutrition Facts panel, including "Added Sugar." The spec preferred brand pages or USDA FoodData Central, but those didn't work: the USDA demo key was rate-limited (HTTP 429), brand sites didn't resolve, three research agents stalled, and Open Food Facts listed Snickers at 0 g added sugar, so it was rejected as unreliable. Each value was read off the live page on 2026-10-06.
 - The full 23-item list landed in slice 2, not slice 3, because the research had to happen before any treat could be shown. Dropped: Starbucks Doubleshot Espresso & Cream (has milk and no added-sugar line), Inotea Matcha Latte (its listing showed exactly the same numbers as the Brown Sugar flavor, so it looked copied and wasn't trusted), Pepsi's Stop & Shop page (blocked; Giant Food's page was used instead).
+- The early hands-on checkpoint moved from after slice 2 to after slice 3. The treat research had already landed in slice 2, which left slice 3 as a small step (the ⓘ popup and a data test), so one pause covers the core loop and the sources together. The build resumed in a new session on 2026-10-10 with the slice-2 checkpoint still unchecked, and the learner is short on time.

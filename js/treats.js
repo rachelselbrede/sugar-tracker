@@ -7,7 +7,7 @@
 
 export const CATEGORIES = ["Boba & coffee", "Candy", "Soda & drinks", "Bakery & cookies", "Ice cream"];
 
-const CHECKED = "2026-10-06";
+export const CHECKED = "2026-10-06";
 
 const label = (store, url) => ({ name: `${store} product page (Nutrition Facts panel)`, url });
 
