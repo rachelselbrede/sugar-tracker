@@ -123,12 +123,12 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored, after slice 3 (core loop: profile → treats → scale and Honey, plus the ⓘ source popups) — moved from after slice 2, see Revisions
-- [ ] Final kick-the-tires exploration and feedback completed
+- [ ] Early usable behavior explored, after slice 3 — skipped at the learner's request on 2026-10-10 to save time; covered by the final review below (see Revisions)
+- [x] Final kick-the-tires exploration and feedback completed — 2026-10-10, the learner opened the app from a fresh first visit in the browser preview and replied "looks good"
 
 ## Final Review
 
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Final review complete — feedback resolved and learner confirms ready to ship (2026-10-10). No changes requested; the three fixes from the independent review were already in before the learner's look.
 
 ## Code Tour and App Map
 
