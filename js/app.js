@@ -1,6 +1,6 @@
 // Treat Yourself: wires the page together. Rules live in logic.js; Honey lives in honey.js.
-import { recommendedLimit, scaleState, todayKey, isValidGoal } from "./logic.js";
-import { storageAvailable, loadProfile, saveProfile, loadGoal, saveGoal, loadLog, saveLog } from "./storage.js";
+import { recommendedLimit, scaleState, todayKey, isValidGoal, customTreatErrors } from "./logic.js";
+import { storageAvailable, loadProfile, saveProfile, loadGoal, saveGoal, loadLog, saveLog, loadCustom, saveCustom } from "./storage.js";
 import { honeySVG } from "./honey.js";
 import { TREATS, CATEGORIES, CHECKED } from "./treats.js";
 
@@ -12,8 +12,20 @@ const state = {
   log: [], // [{ id, treatId, name, emoji, grams, at }]
   day: todayKey(), // which day the log belongs to
   category: CATEGORIES[0],
+  custom: [], // treats the person added themselves, shown under "My treats"
   editing: false, // true while the Profile screen is open from "Edit profile"
 };
+
+const MY_TREATS = "My treats";
+const ALL_TABS = [...CATEGORIES, MY_TREATS];
+
+function findTreat(id) {
+  return TREATS.find((t) => t.id === id) || state.custom.find((t) => t.id === id);
+}
+
+function newId() {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+}
 
 const canSave = storageAvailable();
 
@@ -164,18 +176,16 @@ $("edit-profile").addEventListener("click", () => showProfile({ editing: true })
 // ---------- treat picker ----------
 
 function renderTabs() {
-  $("category-tabs").innerHTML = CATEGORIES.map(
+  $("category-tabs").innerHTML = ALL_TABS.map(
     (cat) =>
       `<button type="button" class="tab" role="tab" data-category-tab="${escapeHTML(cat)}" aria-selected="${cat === state.category}">${escapeHTML(cat)}</button>`,
   ).join("");
 }
 
-function renderTreats() {
-  const treats = TREATS.filter((t) => t.category === state.category);
-  $("treat-grid").innerHTML = treats
-    .map(
-      (t) => `
-      <div class="treat-card" data-category="${escapeHTML(t.category)}">
+function treatCard(t) {
+  const custom = t.basis === "custom";
+  return `
+      <div class="treat-card${custom ? " is-custom" : ""}" data-category="${escapeHTML(t.category)}">
         <button type="button" class="treat-add" data-treat="${t.id}" aria-label="Add ${escapeHTML(t.name)}, ${t.addedSugarG} grams of added sugar">
           <span class="treat-emoji" aria-hidden="true">${t.emoji}</span>
           <span class="treat-name">${escapeHTML(t.name)}</span>
@@ -183,9 +193,21 @@ function renderTreats() {
           <span class="treat-sugar">${t.addedSugarG} g added sugar</span>
         </button>
         <button type="button" class="treat-info" data-info="${t.id}" aria-label="Where the number for ${escapeHTML(t.name)} comes from" title="Where this number comes from">ⓘ</button>
-      </div>`,
-    )
-    .join("");
+      </div>`;
+}
+
+function renderTreats() {
+  if (state.category === MY_TREATS) {
+    const addCard = `
+      <button type="button" class="add-card" data-add-treat>
+        <span class="add-plus" aria-hidden="true">＋</span>
+        <span>Add a treat<small>${state.custom.length ? "from your own label" : "Nothing here yet. Add one from a label."}</small></span>
+      </button>`;
+    $("treat-grid").innerHTML = addCard + [...state.custom].reverse().map(treatCard).join("");
+    return;
+  }
+  const treats = TREATS.filter((t) => t.category === state.category);
+  $("treat-grid").innerHTML = treats.map(treatCard).join("");
 }
 
 $("category-tabs").addEventListener("click", (event) => {
@@ -197,15 +219,19 @@ $("category-tabs").addEventListener("click", (event) => {
 });
 
 $("treat-grid").addEventListener("click", (event) => {
+  if (event.target.closest("[data-add-treat]")) {
+    openCustomForm();
+    return;
+  }
   const info = event.target.closest("[data-info]");
   if (info) {
-    const treat = TREATS.find((t) => t.id === info.dataset.info);
+    const treat = findTreat(info.dataset.info);
     if (treat) openSource(treat);
     return; // ⓘ never logs the treat
   }
   const button = event.target.closest("[data-treat]");
   if (!button) return;
-  const treat = TREATS.find((t) => t.id === button.dataset.treat);
+  const treat = findTreat(button.dataset.treat);
   if (!treat) return;
   logTreat(treat);
   button.classList.remove("just-added");
@@ -218,6 +244,9 @@ $("treat-grid").addEventListener("click", (event) => {
 const sourceDialog = $("source-dialog");
 
 function basisText(treat) {
+  if (treat.basis === "custom") {
+    return "You added this one yourself, from the label on your own package. Treat Yourself hasn't checked it, so it's only as right as the label you read.";
+  }
   if (treat.basis === "no-natural-sugar") {
     return "All the sugar in this one is added. Only total sugar is published, but there's no milk, fruit, or juice in it, so total sugar and added sugar are the same.";
   }
@@ -225,18 +254,83 @@ function basisText(treat) {
 }
 
 function openSource(treat) {
+  const custom = treat.basis === "custom";
   $("source-title").textContent = treat.name;
-  $("source-serving").textContent = `Serving: ${treat.serving}`;
+  $("source-serving").textContent = treat.serving ? `Serving: ${treat.serving}` : "Serving: as you had it";
   $("source-grams").textContent = `${treat.addedSugarG} g added sugar`;
   $("source-basis").textContent = basisText(treat);
   const link = $("source-url");
-  link.href = treat.source.url;
-  link.textContent = treat.source.name;
-  $("source-checked").textContent = `Checked against the source on ${CHECKED}.`;
+  link.parentElement.hidden = custom;
+  if (!custom) {
+    link.href = treat.source.url;
+    link.textContent = treat.source.name;
+  }
+  $("source-checked").textContent = custom
+    ? `Added by you${treat.createdAt ? ` on ${treat.createdAt.slice(0, 10)}` : ""}.`
+    : `Checked against the source on ${CHECKED}.`;
+  const remove = $("source-remove");
+  remove.hidden = !custom;
+  remove.dataset.removeCustom = custom ? treat.id : "";
   sourceDialog.showModal();
 }
 
 $("source-close").addEventListener("click", () => sourceDialog.close());
+
+$("source-remove").addEventListener("click", () => {
+  const id = $("source-remove").dataset.removeCustom;
+  state.custom = state.custom.filter((t) => t.id !== id);
+  if (canSave) saveCustom(state.custom);
+  sourceDialog.close();
+  renderTreats();
+});
+
+// ---------- add your own treat ----------
+
+const customDialog = $("custom-dialog");
+const customForm = $("custom-form");
+
+function openCustomForm() {
+  customForm.reset();
+  $("custom-error").hidden = true;
+  customDialog.showModal();
+  $("custom-name").focus();
+}
+
+$("add-treat-btn").addEventListener("click", openCustomForm);
+$("custom-close").addEventListener("click", () => customDialog.close());
+$("custom-cancel").addEventListener("click", () => customDialog.close());
+customDialog.addEventListener("click", (event) => {
+  if (event.target === customDialog) customDialog.close();
+});
+
+customForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const data = new FormData(customForm);
+  const draft = { name: data.get("name"), serving: data.get("serving"), addedSugarG: data.get("addedSugarG") };
+  const errors = customTreatErrors(draft);
+  if (errors.length) {
+    const box = $("custom-error");
+    box.textContent = errors.join(" ");
+    box.hidden = false;
+    return;
+  }
+  const treat = {
+    id: `custom-${newId()}`,
+    name: String(draft.name).trim(),
+    emoji: "🍭",
+    serving: String(draft.serving || "").trim(),
+    addedSugarG: Number(draft.addedSugarG),
+    basis: "custom",
+    category: MY_TREATS,
+    createdAt: new Date().toISOString(),
+  };
+  state.custom.push(treat);
+  if (canSave) saveCustom(state.custom);
+  customDialog.close();
+  state.category = MY_TREATS;
+  renderTabs();
+  renderTreats();
+});
 
 // Esc is handled by <dialog> itself. A click on the backdrop lands on the dialog element, not its card.
 sourceDialog.addEventListener("click", (event) => {
@@ -248,7 +342,7 @@ sourceDialog.addEventListener("click", (event) => {
 function logTreat(treat) {
   checkDay(); // re-check the date at write time, so a tap just after midnight starts today's log
   state.log.push({
-    id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+    id: newId(),
     treatId: treat.id,
     name: treat.name,
     emoji: treat.emoji,
@@ -440,6 +534,8 @@ function init() {
   } else if (savedLog) {
     persistLog(); // yesterday's log: clear it
   }
+
+  state.custom = canSave ? loadCustom().map((t) => ({ ...t, category: MY_TREATS })) : [];
 
   const profile = canSave ? loadProfile() : null;
   const limit = profile ? recommendedLimit(profile) : null;

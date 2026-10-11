@@ -145,6 +145,7 @@
           </div>
           <div class="tabs" role="tablist" aria-label="Treat categories" id="category-tabs"></div>
           <div class="treat-grid" id="treat-grid" role="tabpanel"></div>
+          <p class="picker-foot">Can't find it? <button type="button" class="link-btn" id="add-treat-btn">Add your own treat</button></p>
         </section>
 
         <section class="panel log" aria-labelledby="log-heading">
@@ -178,7 +179,32 @@
       <p class="source-basis" id="source-basis"></p>
       <p class="source-link"><a id="source-url" href="#" target="_blank" rel="noopener noreferrer"></a></p>
       <p class="source-checked" id="source-checked"></p>
+      <p class="source-actions"><button type="button" class="ghost-btn" id="source-remove" hidden>Remove from my treats</button></p>
     </div>
+  </dialog>
+
+  <!-- Add your own treat -->
+  <dialog class="source-dialog" id="custom-dialog" aria-labelledby="custom-title">
+    <form class="source-card custom-form" id="custom-form" novalidate>
+      <button type="button" class="close-btn" id="custom-close" aria-label="Close">✕</button>
+      <p class="source-kicker">Add your own treat</p>
+      <h2 id="custom-title" class="source-name">Not on the list? Add it.</h2>
+      <p class="custom-help">Look for the <strong>"Includes Xg Added Sugars"</strong> line on the Nutrition Facts label, for the amount you'll have. It goes under <strong>My treats</strong>.</p>
+      <label class="goal-label" for="custom-name">Name</label>
+      <input class="goal-input custom-input" id="custom-name" name="name" type="text" maxlength="60" placeholder="Grandma's lemon bar" autocomplete="off">
+      <label class="goal-label" for="custom-serving">Serving <span class="optional">(optional)</span></label>
+      <input class="goal-input custom-input" id="custom-serving" name="serving" type="text" maxlength="40" placeholder="1 bar" autocomplete="off">
+      <label class="goal-label" for="custom-grams">Added sugar</label>
+      <div class="goal-row">
+        <input class="goal-input" id="custom-grams" name="addedSugarG" type="number" inputmode="numeric" min="0" max="200" step="1" placeholder="12">
+        <span class="goal-unit">g per serving</span>
+      </div>
+      <p class="goal-error" id="custom-error" role="alert" hidden></p>
+      <div class="goal-actions custom-actions">
+        <button type="submit" class="primary-btn goal-save">Save to my treats</button>
+        <button type="button" class="ghost-btn" id="custom-cancel">Cancel</button>
+      </div>
+    </form>
   </dialog>
 
 </main>

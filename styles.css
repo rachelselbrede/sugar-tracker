@@ -364,6 +364,35 @@ main { position: relative; z-index: 1; }
 [data-category="Ice cream"]        { --card-tint: #e6f2ff; }
 [data-category="Candy"]            { --card-tint: #ffe8f2; }
 [data-category="Soda & drinks"]    { --card-tint: #e4f7ef; }
+[data-category="My treats"]        { --card-tint: #fff8e1; }
+
+.treat-card.is-custom .treat-sugar::after { content: " · yours"; font-weight: 600; color: var(--ink-soft); }
+.add-card {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  gap: .25rem;
+  text-align: center;
+  border: 2px dashed var(--pink);
+  border-radius: var(--radius-sm);
+  background: var(--tint);
+  color: var(--pink-ink);
+  font-weight: 800;
+  padding: .85rem;
+  transition: transform .15s ease, background .15s ease;
+}
+.add-card:hover { transform: translateY(-2px); background: #ffe4ef; }
+.add-card .add-plus { font-size: 1.6rem; line-height: 1; }
+.add-card small { display: block; font-weight: 600; color: var(--ink-soft); font-size: .78rem; }
+.picker-foot { margin: .9rem 0 0; font-size: .88rem; color: var(--ink-soft); font-weight: 600; }
+.link-btn { border: 0; background: none; padding: 0; color: var(--pink-ink); font-weight: 800; text-decoration: underline; text-decoration-color: var(--pink); }
+.link-btn:hover { text-decoration-color: var(--pink-ink); }
+.custom-help { margin: .4rem 0 .9rem; font-size: .9rem; line-height: 1.5; color: var(--ink-soft); }
+.custom-input { width: 100%; border-radius: var(--radius-sm); }
+.custom-form .goal-label { margin-top: .7rem; }
+.optional { font-weight: 600; color: var(--ink-soft); }
+.custom-actions { margin-top: 1rem; }
+.source-actions { margin: .9rem 0 0; }
 
 .treat-info {
   position: absolute;

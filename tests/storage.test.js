@@ -65,3 +65,19 @@ test("a blocked store never throws", () => {
   broken = false;
   assert.equal(storage.storageAvailable(), true);
 });
+
+test("custom treats round-trip and drop broken rows", () => {
+  storage.saveCustom([
+    { id: "custom-1", name: "Lemon bar", emoji: "🍭", serving: "1 bar", addedSugarG: 12, basis: "custom", createdAt: "2026-10-10T20:00:00.000Z" },
+  ]);
+  assert.deepEqual(storage.loadCustom(), [
+    { id: "custom-1", name: "Lemon bar", emoji: "🍭", serving: "1 bar", addedSugarG: 12, basis: "custom", createdAt: "2026-10-10T20:00:00.000Z" },
+  ]);
+  memory.set("ty.custom", JSON.stringify([{ id: "ok", name: "Fine", addedSugarG: 3 }, { id: 7, name: "bad id", addedSugarG: 3 }, { id: "neg", name: "Negative", addedSugarG: -2 }, "junk", { id: "nan", name: "Decimal", addedSugarG: 2.5 }]));
+  const list = storage.loadCustom();
+  assert.equal(list.length, 1);
+  assert.equal(list[0].emoji, "🍭");
+  assert.equal(list[0].basis, "custom");
+  memory.set("ty.custom", "{not json");
+  assert.deepEqual(storage.loadCustom(), []);
+});

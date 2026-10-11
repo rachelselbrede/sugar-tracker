@@ -148,7 +148,7 @@ Source: learner's choice, "goal setting like before".
 - The original Treat Yourself look.
 
 ## Deferred From the POC
-- **Custom treats:** needs its own form and validation, and the source would be unverified.
+- ~~**Custom treats:** needs its own form and validation, and the source would be unverified.~~ *Pulled in on 2026-10-10 at the learner's request (`6-ship`): a **My treats** tab with an "Add your own treat" form (name, optional serving, added-sugar grams from the person's own label, 0–200 whole grams), saved in the browser. Custom treats log like any other, and their ⓘ popup says the number came from the person's own label and wasn't checked by the app, with a remove button. Invalid entries get a plain message and aren't saved.*
 - **Search:** not needed with only about 25 items.
 - **History and streaks:** need multi-day storage and a chart, and aren't needed to prove the kernel.
 - **Share card:** image generation, not core.

@@ -120,8 +120,14 @@ The URLs come from `devpost/sources.md`: AHA [1], WHO [6].
 - **Tapping:** the whole card is a button that logs the treat. A separate small **ⓘ** button inside the card opens the source popup and stops the tap from also logging.
 - PRD ref: `prd.md > Treat Picker`.
 
+### My Treats *(added 2026-10-10 in `6-ship`)*
+- **What it shows:** a sixth tab, **My treats**, with an "Add a treat" card and the person's own treats. A "Can't find it? Add your own treat" link under every category grid opens the same form.
+- **The form:** a dialog with name (required, up to 60 characters), serving (optional), and added-sugar grams (whole number 0–200), with a hint to read the "Includes Xg Added Sugars" line. `customTreatErrors()` in `logic.js` returns plain-language problems; nothing is saved until the list is empty.
+- **Storage:** `loadCustom()` / `saveCustom()` in `storage.js`, key `ty.custom`, with the same shape checks as the other keys.
+- **Honesty:** custom cards are marked "· yours"; their ⓘ popup says the number came from the person's own label and wasn't checked by the app, shows no source link, and offers **Remove from my treats**. Removing a treat doesn't touch today's log, because log entries copy the name and grams.
+
 ### Source Popup
-- **What it shows:** a small dialog with the treat name, serving, source name, **basis** (see `## Data Model`), and a link that opens in a new tab.
+- **What it shows:** a small dialog with the treat name, serving, source name, **basis** (see `## Data Model`), and a link that opens in a new tab. For a custom treat, the basis says it was entered by the person and there is no link.
 - **Closing:** a close button, Esc, or tapping outside.
 - PRD ref: `prd.md > Treat Picker`.
 
@@ -172,6 +178,7 @@ All data is in localStorage, on this device only. Clearing site data resets the 
 | `ty.profile` | `{ sex: "female"\|"male"\|"unspecified", prediabetic: "yes"\|"no"\|"unsure" }` | Start tracking, or saving Edit profile | It exists, so you skip to the tracker |
 | `ty.goal` | `{ mode: "recommended"\|"custom", grams: number }` | Saving a goal, a preset, "use recommended," or a profile change (resets to recommended) | Used as the scale's limit |
 | `ty.log` | `{ day: "YYYY-MM-DD", items: [{ id, treatId, name, emoji, grams, at }] }` | Logging or removing a treat | Kept if `day` is today, cleared if not |
+| `ty.custom` | `[{ id, name, emoji, serving, addedSugarG, basis: "custom", createdAt }]` *(added 2026-10-10)* | Adding or removing one of the person's own treats | Shown under the **My treats** tab |
 
 Each log entry copies the name and grams, so it stays correct even if the treat list changes later.
 

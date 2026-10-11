@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { recommendedLimit, scaleState, todayKey, isValidGoal, SOURCES } from "../js/logic.js";
+import { recommendedLimit, scaleState, todayKey, isValidGoal, customTreatErrors, SOURCES } from "../js/logic.js";
 
 test("recommendedLimit waits until both questions are answered", () => {
   assert.equal(recommendedLimit({}), null);
@@ -115,4 +115,21 @@ test("isValidGoal rejects 0, negatives, blanks, over 300, decimals, and junk", (
   for (const bad of [0, -5, "", "   ", 301, 2.5, "2.5", "0", "-5", "301", "abc", null, undefined, NaN, Infinity, "1e400", true]) {
     assert.equal(isValidGoal(bad), false, String(bad));
   }
+});
+
+test("customTreatErrors accepts a named treat with whole-number grams from 0 to 200", () => {
+  assert.deepEqual(customTreatErrors({ name: "Grandma's lemon bar", addedSugarG: "12", serving: "1 bar" }), []);
+  assert.deepEqual(customTreatErrors({ name: "Plain seltzer", addedSugarG: 0 }), []);
+  assert.deepEqual(customTreatErrors({ name: "Big cake", addedSugarG: 200, serving: "" }), []);
+});
+
+test("customTreatErrors names each problem in plain language", () => {
+  assert.equal(customTreatErrors({ name: "", addedSugarG: "12" }).length, 1);
+  assert.equal(customTreatErrors({ name: "x".repeat(61), addedSugarG: "12" }).length, 1);
+  for (const bad of ["", " ", "-1", "201", "2.5", "abc", undefined]) {
+    const errors = customTreatErrors({ name: "Cookie", addedSugarG: bad });
+    assert.equal(errors.length, 1, `grams ${String(bad)}`);
+    assert.match(errors[0], /0 to 200/);
+  }
+  assert.equal(customTreatErrors({ name: "", addedSugarG: "x" }).length, 2);
 });

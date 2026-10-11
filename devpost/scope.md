@@ -37,14 +37,15 @@ In the learner's words: *"they set their profile then add treats."*
 
 ## The POC Boundary
 - **Profile:** sex and prediabetic yes/no set a default daily added-sugar limit, with a cited source. The user can override it.
-- **Treat picker:** a short, curated list of common treats (about 20–30). Each shows added sugar per serving and where the number came from.
+- **Treat picker:** a curated list of common treats. Each shows added sugar per serving and where the number came from. *(Revised 2026-10-10 in `6-ship`, learner's decision: the list is being expanded well past the original 20–30 under the same verification rule.)*
+- **My treats:** the person can add a treat that isn't listed, typing its name and the added-sugar grams from their own label. It's kept under its own tab and marked as entered by them. *(Added 2026-10-10 in `6-ship`, learner's decision; moved up from Later.)*
 - **Today's log:** running total; remove items added by mistake.
 - **Sugar scale:** fills toward the personal limit, with kind messages and Honey reacting.
 - **Daily reset at midnight;** everything stored in the browser only (no server, no account).
 - A short "not medical advice" note.
 
 ## Later
-- Add your own custom treats
+- ~~Add your own custom treats~~ (pulled into the proof of concept on 2026-10-10)
 - Search across the treat list
 - 7-day history chart and sweet streaks
 - Share-my-day card

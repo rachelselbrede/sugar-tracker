@@ -122,3 +122,25 @@ export function isValidGoal(value) {
   }
   return Number.isInteger(value) && value >= GOAL_MIN && value <= GOAL_MAX;
 }
+
+// ---------- custom treats ----------
+
+export const CUSTOM_SUGAR_MAX = 200;
+
+// Checks what someone typed into the "Add your own treat" form. Returns a list of plain-language
+// problems; an empty list means it's fine. Added sugar must be a whole number of grams, 0 to 200.
+export function customTreatErrors({ name, addedSugarG, serving } = {}) {
+  const errors = [];
+  const cleanName = typeof name === "string" ? name.trim() : "";
+  if (!cleanName) errors.push("Give it a name.");
+  else if (cleanName.length > 60) errors.push("Keep the name under 60 characters.");
+
+  let grams = addedSugarG;
+  if (typeof grams === "string") grams = grams.trim() === "" ? NaN : Number(grams);
+  if (!Number.isInteger(grams) || grams < 0 || grams > CUSTOM_SUGAR_MAX) {
+    errors.push(`Added sugar needs to be a whole number from 0 to ${CUSTOM_SUGAR_MAX} g.`);
+  }
+
+  if (typeof serving === "string" && serving.trim().length > 40) errors.push("Keep the serving under 40 characters.");
+  return errors;
+}

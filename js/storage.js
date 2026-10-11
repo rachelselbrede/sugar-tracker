@@ -3,7 +3,7 @@
 // to "nothing saved" and the app carries on in memory for that visit.
 // Keys and shapes: see devpost/spec.md > Data Model.
 
-export const KEYS = { profile: "ty.profile", goal: "ty.goal", log: "ty.log" };
+export const KEYS = { profile: "ty.profile", goal: "ty.goal", log: "ty.log", custom: "ty.custom" };
 
 const SEXES = ["female", "male", "unspecified"];
 const PREDIABETIC = ["yes", "no", "unsure"];
@@ -85,4 +85,26 @@ export function loadLog() {
 
 export function saveLog(log) {
   return write(KEYS.log, { day: log.day, items: log.items });
+}
+
+// ---------- the person's own treats ----------
+
+export function loadCustom() {
+  const list = read(KEYS.custom);
+  if (!Array.isArray(list)) return [];
+  return list
+    .filter((t) => isObject(t) && typeof t.id === "string" && typeof t.name === "string" && t.name.trim() && Number.isInteger(t.addedSugarG) && t.addedSugarG >= 0)
+    .map((t) => ({
+      id: t.id,
+      name: t.name.trim().slice(0, 60),
+      emoji: typeof t.emoji === "string" && t.emoji ? t.emoji : "🍭",
+      serving: typeof t.serving === "string" ? t.serving.trim().slice(0, 40) : "",
+      addedSugarG: t.addedSugarG,
+      basis: "custom",
+      createdAt: typeof t.createdAt === "string" ? t.createdAt : "",
+    }));
+}
+
+export function saveCustom(list) {
+  return write(KEYS.custom, list.map((t) => ({ id: t.id, name: t.name, emoji: t.emoji, serving: t.serving, addedSugarG: t.addedSugarG, basis: "custom", createdAt: t.createdAt })));
 }
