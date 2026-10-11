@@ -1,5 +1,6 @@
 # Personal learning context — kept out of commits by default
 /devpost/learner-profile.md
+/devpost/ship-notes.md
 
 # Local credentials (a secret-free .env.example is fine to commit)
 .env

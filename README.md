@@ -2,9 +2,17 @@
 
 A cute, guilt-free added-sugar tracker. Answer two questions, get a personal daily added-sugar limit with its source, then tap treats to see how close you are. Honey the bear keeps you company, and nothing you enter leaves your browser.
 
-Built as a small proof of concept for Devpost's **Build With AI: Basics** hackathon, using a plan-first workflow (scope → PRD → spec → build). The planning documents are in [`devpost/`](devpost/).
+Built as a small proof of concept for Devpost's **Build With AI: Basics** hackathon with the Devpost Learn skill pack, following its plan-first workflow (scope → PRD → spec → build). The planning documents are in [`devpost/`](devpost/): [`scope.md`](devpost/scope.md), [`prd.md`](devpost/prd.md), [`spec.md`](devpost/spec.md), the build [`checklist.md`](devpost/checklist.md), and a take-home [app map](https://rachelselbrede.github.io/sugar-tracker/devpost/app-map.html). [`skills-lock.json`](skills-lock.json) records which skill-pack versions were used.
 
 **Try it:** https://rachelselbrede.github.io/sugar-tracker/ · **Code:** https://github.com/rachelselbrede/sugar-tracker
+
+![The Treat Yourself tracker: a treat picker with ⓘ source buttons, today's log, and a sugar scale showing 22 g of a 25 g limit while Honey the bear says "Getting close. Just something to notice."](docs/screenshot.png)
+
+## Who it's for
+
+Someone who is prediabetic, or isn't sure, and wants to notice how much added sugar they eat without a diet app that feels like calorie-shaming. Anyone can use it, but the default limits and the wording are tuned for them.
+
+Why it matters: more than 2 in 5 American adults have prediabetes, which raises the risk of type 2 diabetes, heart disease, and stroke ([CDC](https://www.cdc.gov/diabetes/prevention-type-2/prediabetes-prevent-type-2.html)). US adults average about 17 teaspoons of added sugar a day, roughly 68 g at 4 g per teaspoon, and the leading sources are sugar-sweetened beverages, desserts, and sweet snacks ([CDC](https://www.cdc.gov/nutrition/php/data-research/added-sugars.html)). The American Heart Association's limit for women is 25 g. The app counts added sugar only, because that is what the public limits are written about, and because it's the sugar you can actually choose.
 
 ## What it does
 
@@ -13,6 +21,15 @@ Built as a small proof of concept for Devpost's **Build With AI: Basics** hackat
 - **A kind sugar scale.** Tap a treat to log it. The scale fills toward your limit, and Honey reacts. Going over shows the number and a reminder that tomorrow is a fresh start. No red alerts, no guilt.
 - **Remembers you.** Your profile, goal, and today's log are saved in your browser. After midnight the log starts fresh; your profile stays.
 - **Your own goal.** The **⚙︎ Daily goal** panel lets you set a custom number, use the 25 / 36 / 50 g quick buttons, go back to your recommended limit, or edit your profile.
+
+## How it differs
+
+- **The limit shows its work.** The sources are on the limit card, and the app says plainly that there is no official added-sugar number for prediabetes, so it uses the careful end of WHO and AHA guidance and labels it general guidance.
+- **Every treat cites its label.** ⓘ shows the serving, the "Includes Added Sugars" line it was read from, the store page, and the date it was checked. Treats whose labels don't list added sugar were left out, not guessed.
+- **Added sugar only.** Total-sugar counts make fruit and milk count against you. The public limits are about added sugar, so that's what the scale measures.
+- **Verified beats big.** 23 checked treats instead of a long guessed list. During research a crowdsourced database listed a Snickers bar at 0 g added sugar, which is why every number here was read from the label page by hand (see `devpost/checklist.md > Revisions`).
+- **Kind by design.** No red, no alarm copy. Going over states the number and that tomorrow is a fresh start.
+- **Nothing leaves your browser.** Prediabetes status is health information. There is no account and no server.
 
 ## Run it
 
@@ -48,6 +65,8 @@ This uses Node's built-in test runner and installs nothing. The tests cover the 
 - The 50 g quick button is the FDA Daily Value for added sugars: https://www.fda.gov/food/nutrition-facts-label/added-sugars-nutrition-facts-label
 
 **Treats.** A treat only goes on the list if its added sugar is known, not guessed. Each value is the "Includes Xg Added Sugars" line from the product's US Nutrition Facts panel, read from a grocery-store product page that shows the full panel, for the serving shown. Items whose labels only give total sugar and contain milk, fruit, or juice were left out. The list and its source links live in [`js/treats.js`](js/treats.js), and the research notes are in [`devpost/sources.md`](devpost/sources.md).
+
+Product names appear only to identify which Nutrition Facts panel a number came from. No logos or brand assets are used.
 
 Treat Yourself is general guidance, not medical advice. Talk to your clinician about what's right for you.
 
