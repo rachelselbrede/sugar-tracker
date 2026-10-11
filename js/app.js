@@ -384,6 +384,32 @@ function showTracker() {
   window.scrollTo(0, 0);
 }
 
+// ---------- floating hearts and sparkles ----------
+
+// The page ships with a few hearts in the HTML; this adds many more, each with its own path,
+// size, color, and speed. They sit behind the content and are hidden when reduced motion is on.
+function seedSky(count = 64) {
+  const sky = document.querySelector(".sky");
+  if (!sky) return;
+  const glyphs = ["♡", "♡", "♡", "✦", "✧", "⋆", "❀", "♡", "✦", "🍬"];
+  const colors = ["var(--pink)", "var(--pink)", "var(--lilac)", "var(--mint)", "var(--butter)", "var(--pink-deep)"];
+  const rand = (min, max) => min + Math.random() * (max - min);
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < count; i += 1) {
+    const span = document.createElement("span");
+    span.textContent = glyphs[i % glyphs.length];
+    span.style.setProperty("--x", `${rand(1, 99).toFixed(1)}%`);
+    span.style.setProperty("--s", `${rand(0.8, 1.9).toFixed(2)}rem`);
+    span.style.setProperty("--d", `${rand(18, 42).toFixed(1)}s`);
+    span.style.setProperty("--delay", `-${rand(0, 42).toFixed(1)}s`);
+    span.style.setProperty("--sx", `${rand(-28, 28).toFixed(0)}px`);
+    span.style.setProperty("--c", colors[i % colors.length]);
+    span.style.setProperty("--o", rand(0.5, 0.9).toFixed(2));
+    fragment.appendChild(span);
+  }
+  sky.appendChild(fragment);
+}
+
 // ---------- start up, and start fresh each day ----------
 
 // If the saved log is from another day, today starts empty. The profile and goal stay.
@@ -405,6 +431,7 @@ function todayLabel() {
 }
 
 function init() {
+  seedSky();
   $("storage-note").hidden = canSave;
 
   const savedLog = canSave ? loadLog() : null;
