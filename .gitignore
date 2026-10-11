@@ -13,3 +13,8 @@
 # Devpost Learn skill pack (course tooling, not part of the app)
 .agents/
 .claude/
+
+# Video-making tooling and narration (not part of the app)
+/tools/
+/devpost/narration*
+/devpost/video/
