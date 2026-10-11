@@ -64,6 +64,8 @@ honey.js (SVG moods) ──▶ app.js
   ```
   This runs `node --test` and installs nothing.
 - **Live link (learner chose GitHub Pages):** a public GitHub repo, with Pages set to deploy from the `main` branch root. It's free and needs no build. The repo name gets picked in `6-ship`, and it can't be `treat-yourself`, because the original already uses that name.
+  - **Repository (set in `6-ship`, 2026-10-10):** https://github.com/rachelselbrede/sugar-tracker
+  - **Live site:** https://rachelselbrede.github.io/sugar-tracker/
 - **Demo recording:** record the live link or localhost. Show these, in order:
   1. Profile: male + not prediabetic shows 36 g, then switching to prediabetic shows 25 g with its source.
   2. Start tracking.

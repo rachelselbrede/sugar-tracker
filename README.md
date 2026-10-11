@@ -4,6 +4,8 @@ A cute, guilt-free added-sugar tracker. Answer two questions, get a personal dai
 
 Built as a small proof of concept for Devpost's **Build With AI: Basics** hackathon, using a plan-first workflow (scope → PRD → spec → build). The planning documents are in [`devpost/`](devpost/).
 
+**Try it:** https://rachelselbrede.github.io/sugar-tracker/ · **Code:** https://github.com/rachelselbrede/sugar-tracker
+
 ## What it does
 
 - **A personal, sourced limit.** Pick your sex and whether you're prediabetic, and the app shows a recommended daily added-sugar limit, the reason, and a link to the guidance it came from.
