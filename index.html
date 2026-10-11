@@ -191,12 +191,12 @@
       <h2 id="custom-title" class="source-name">Not on the list? Add it.</h2>
       <p class="custom-help">Look for the <strong>"Includes Xg Added Sugars"</strong> line on the Nutrition Facts label, for the amount you'll have. It goes under <strong>My treats</strong>.</p>
       <label class="goal-label" for="custom-name">Name</label>
-      <input class="goal-input custom-input" id="custom-name" name="name" type="text" maxlength="60" placeholder="Grandma's lemon bar" autocomplete="off">
+      <input class="goal-input custom-input" id="custom-name" name="name" type="text" maxlength="60" placeholder="Grandma's lemon bar" autocomplete="off" aria-describedby="custom-error">
       <label class="goal-label" for="custom-serving">Serving <span class="optional">(optional)</span></label>
       <input class="goal-input custom-input" id="custom-serving" name="serving" type="text" maxlength="40" placeholder="1 bar" autocomplete="off">
       <label class="goal-label" for="custom-grams">Added sugar</label>
       <div class="goal-row">
-        <input class="goal-input" id="custom-grams" name="addedSugarG" type="number" inputmode="numeric" min="0" max="200" step="1" placeholder="12">
+        <input class="goal-input" id="custom-grams" name="addedSugarG" type="number" inputmode="numeric" min="0" max="200" step="1" placeholder="12" aria-describedby="custom-error">
         <span class="goal-unit">g per serving</span>
       </div>
       <p class="goal-error" id="custom-error" role="alert" hidden></p>

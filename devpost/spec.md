@@ -200,16 +200,18 @@ The values and the URL above are placeholders. The real data gets compiled and c
 ## File Structure
 ```
 treat-yourself-v2/
-├── index.html          # Both views (Profile, Tracker), header, footer, popup + goal panel markup
+├── index.html          # Both views (Profile, Tracker), header, footer, source popup, goal panel, add-your-own-treat form
 ├── styles.css          # Fonts, color tokens, layout, cards, scale, Honey animations, reduced-motion
 ├── js/
 │   ├── app.js          # Entry point: load state, choose view, render, handle taps, midnight check
-│   ├── logic.js        # Pure functions: recommendedLimit, scaleState, isValidGoal, todayKey
-│   ├── storage.js      # Safe localStorage read/write for ty.profile, ty.goal, ty.log
-│   ├── treats.js       # Curated treats with added sugar, serving, basis, and source link
+│   ├── logic.js        # Pure functions: recommendedLimit, scaleState, isValidGoal, todayKey, customTreatErrors
+│   ├── storage.js      # Safe localStorage read/write for ty.profile, ty.goal, ty.log, ty.custom
+│   ├── treats.js       # 70 curated treats with added sugar, serving, basis, source link, and check date
 │   └── honey.js        # Honey the bear SVG in four moods
 ├── tests/
-│   └── logic.test.js   # node --test: limit table, scale math/levels, goal validation, day key
+│   ├── logic.test.js   # node --test: limit table, scale math/levels, goal validation, day key, custom-treat validation
+│   ├── storage.test.js # safe storage, including corrupt data, a blocked store, and ty.custom
+│   └── treats.test.js  # every treat has grams, serving, basis, https source, check date; enough per category
 ├── package.json        # { "type": "module", "scripts": { "test": "node --test" } }, no dependencies
 ├── README.md           # What it is, run/test steps, live link, sources, Honey disclosure
 ├── LICENSE             # MIT

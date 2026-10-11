@@ -190,7 +190,7 @@ function treatCard(t) {
           <span class="treat-emoji" aria-hidden="true">${t.emoji}</span>
           <span class="treat-name">${escapeHTML(t.name)}</span>
           <span class="treat-serving">${escapeHTML(t.serving)}</span>
-          <span class="treat-sugar">${t.addedSugarG} g added sugar</span>
+          <span class="treat-sugar">${t.addedSugarG} g added sugar${custom ? `<span class="treat-yours"> · yours</span>` : ""}</span>
         </button>
         <button type="button" class="treat-info" data-info="${t.id}" aria-label="Where the number for ${escapeHTML(t.name)} comes from" title="Where this number comes from">ⓘ</button>
       </div>`;
@@ -241,6 +241,20 @@ $("treat-grid").addEventListener("click", (event) => {
 
 // ---------- source popup ----------
 
+// Esc is handled by <dialog> itself. A click on the backdrop lands on the dialog element, not its card.
+// Only close when the press also started on the backdrop, so selecting text in a field and letting go
+// outside the card doesn't throw away what was typed.
+function closeOnBackdrop(dialog) {
+  let pressedOnBackdrop = false;
+  dialog.addEventListener("pointerdown", (event) => {
+    pressedOnBackdrop = event.target === dialog;
+  });
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog && pressedOnBackdrop) dialog.close();
+    pressedOnBackdrop = false;
+  });
+}
+
 const sourceDialog = $("source-dialog");
 
 function basisText(treat) {
@@ -266,8 +280,8 @@ function openSource(treat) {
     link.textContent = treat.source.name;
   }
   $("source-checked").textContent = custom
-    ? `Added by you${treat.createdAt ? ` on ${treat.createdAt.slice(0, 10)}` : ""}.`
-    : `Checked against the source on ${CHECKED}.`;
+    ? `Added by you${treat.createdAt ? ` on ${todayKey(new Date(treat.createdAt))}` : ""}.`
+    : `Checked against the source on ${treat.checked || CHECKED}.`;
   const remove = $("source-remove");
   remove.hidden = !custom;
   remove.dataset.removeCustom = custom ? treat.id : "";
@@ -292,6 +306,8 @@ const customForm = $("custom-form");
 function openCustomForm() {
   customForm.reset();
   $("custom-error").hidden = true;
+  $("custom-name").removeAttribute("aria-invalid");
+  $("custom-grams").removeAttribute("aria-invalid");
   customDialog.showModal();
   $("custom-name").focus();
 }
@@ -299,19 +315,22 @@ function openCustomForm() {
 $("add-treat-btn").addEventListener("click", openCustomForm);
 $("custom-close").addEventListener("click", () => customDialog.close());
 $("custom-cancel").addEventListener("click", () => customDialog.close());
-customDialog.addEventListener("click", (event) => {
-  if (event.target === customDialog) customDialog.close();
-});
+closeOnBackdrop(customDialog);
 
 customForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const data = new FormData(customForm);
   const draft = { name: data.get("name"), serving: data.get("serving"), addedSugarG: data.get("addedSugarG") };
   const errors = customTreatErrors(draft);
+  const nameBad = errors.some((e) => /name/i.test(e));
+  const gramsBad = errors.some((e) => /sugar/i.test(e));
+  $("custom-name").setAttribute("aria-invalid", String(nameBad));
+  $("custom-grams").setAttribute("aria-invalid", String(gramsBad));
   if (errors.length) {
     const box = $("custom-error");
     box.textContent = errors.join(" ");
     box.hidden = false;
+    (nameBad ? $("custom-name") : $("custom-grams")).focus();
     return;
   }
   const treat = {
@@ -330,12 +349,12 @@ customForm.addEventListener("submit", (event) => {
   state.category = MY_TREATS;
   renderTabs();
   renderTreats();
+  // Bring the My treats tab into view on narrow screens, and put focus on the new treat so it can be logged right away.
+  document.querySelector('.tab[aria-selected="true"]')?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  $("treat-grid").querySelector(`[data-treat="${treat.id}"]`)?.focus();
 });
 
-// Esc is handled by <dialog> itself. A click on the backdrop lands on the dialog element, not its card.
-sourceDialog.addEventListener("click", (event) => {
-  if (event.target === sourceDialog) sourceDialog.close();
-});
+closeOnBackdrop(sourceDialog);
 
 // ---------- today's log ----------
 

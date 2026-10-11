@@ -2,8 +2,17 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { TREATS, CATEGORIES, CHECKED } from "../js/treats.js";
 
-test("the treat list is proof-of-concept sized (about 20–30 items)", () => {
-  assert.ok(TREATS.length >= 20 && TREATS.length <= 30, `found ${TREATS.length}`);
+test("the treat list is a real choice in every category, and still hand-curated", () => {
+  assert.ok(TREATS.length >= 60 && TREATS.length <= 120, `found ${TREATS.length}`);
+  for (const category of CATEGORIES) {
+    assert.ok(TREATS.filter((t) => t.category === category).length >= 8, `${category} has too few treats`);
+  }
+});
+
+test("every treat has a check date in YYYY-MM-DD form", () => {
+  for (const t of TREATS) {
+    if (t.checked !== undefined) assert.match(t.checked, /^\d{4}-\d{2}-\d{2}$/, `${t.id}: checked`);
+  }
 });
 
 test("every treat has a positive added-sugar number, a serving, a valid basis, and an https source", () => {

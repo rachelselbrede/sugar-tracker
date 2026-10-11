@@ -17,17 +17,18 @@ Why it matters: more than 2 in 5 American adults have prediabetes, which raises 
 ## What it does
 
 - **A personal, sourced limit.** Pick your sex and whether you're prediabetic, and the app shows a recommended daily added-sugar limit, the reason, and a link to the guidance it came from.
-- **Sourced treats.** Every treat in the picker shows its added sugar and serving. Tap **ⓘ** to see exactly where the number came from, with a link to the product's Nutrition Facts panel.
+- **70 sourced treats.** Every built-in treat shows its added sugar and serving. Tap **ⓘ** to see exactly where the number came from, with a link to the product's Nutrition Facts panel and the date it was checked.
+- **Add your own.** Can't find it? Open **My treats** and type a treat's name and the "Includes Added Sugars" grams from your own label. It's marked as yours, and its ⓘ says plainly that the app hasn't checked it.
 - **A kind sugar scale.** Tap a treat to log it. The scale fills toward your limit, and Honey reacts. Going over shows the number and a reminder that tomorrow is a fresh start. No red alerts, no guilt.
-- **Remembers you.** Your profile, goal, and today's log are saved in your browser. After midnight the log starts fresh; your profile stays.
+- **Remembers you.** Your profile, goal, your own treats, and today's log are saved in your browser. After midnight the log starts fresh; your profile stays.
 - **Your own goal.** The **⚙︎ Daily goal** panel lets you set a custom number, use the 25 / 36 / 50 g quick buttons, go back to your recommended limit, or edit your profile.
 
 ## How it differs
 
 - **The limit shows its work.** The sources are on the limit card, and the app says plainly that there is no official added-sugar number for prediabetes, so it uses the careful end of WHO and AHA guidance and labels it general guidance.
-- **Every treat cites its label.** ⓘ shows the serving, the "Includes Added Sugars" line it was read from, the store page, and the date it was checked. Treats whose labels don't list added sugar were left out, not guessed.
+- **Every built-in treat cites its label.** ⓘ shows the serving, the "Includes Added Sugars" line it was read from, the store page, and the date it was checked. Treats whose labels don't list added sugar were left out, not guessed. Treats you add yourself live under My treats, are marked as yours, and are never shown as verified.
 - **Added sugar only.** Total-sugar counts make fruit and milk count against you. The public limits are about added sugar, so that's what the scale measures.
-- **Verified beats big.** 23 checked treats instead of a long guessed list. During research a crowdsourced database listed a Snickers bar at 0 g added sugar, which is why every number here was read from the label page by hand (see `devpost/checklist.md > Revisions`).
+- **Verified beats big.** 70 checked treats instead of a long guessed list. During research a crowdsourced database listed a Snickers bar at 0 g added sugar, which is why every number in the built-in list was read from a store's label page, and the second batch was re-read by an independent check before it went in (see `devpost/checklist.md > Revisions`).
 - **Kind by design.** No red, no alarm copy. Going over states the number and that tomorrow is a fresh start.
 - **Nothing leaves your browser.** Prediabetes status is health information. There is no account and no server.
 
@@ -47,7 +48,7 @@ Then visit http://localhost:8000. Opening `index.html` directly won't work, beca
 npm test
 ```
 
-This uses Node's built-in test runner and installs nothing. The tests cover the limit table, the scale math, goal validation, the day key, safe storage, and a check that every treat has a positive added-sugar value, a serving, a valid basis, and an https source.
+This uses Node's built-in test runner and installs nothing. The tests cover the limit table, the scale math, goal validation, the day key, safe storage, a check that every built-in treat has a positive added-sugar value, a serving, a valid basis, an https source, and a check date, plus validation and safe storage of treats you add yourself.
 
 ## How the numbers are chosen
 
@@ -64,7 +65,7 @@ This uses Node's built-in test runner and installs nothing. The tests cover the 
 - WHO, *Guideline: sugars intake for adults and children* (2015): https://www.who.int/news/item/04-03-2015-who-calls-on-countries-to-reduce-sugars-intake-among-adults-and-children
 - The 50 g quick button is the FDA Daily Value for added sugars: https://www.fda.gov/food/nutrition-facts-label/added-sugars-nutrition-facts-label
 
-**Treats.** A treat only goes on the list if its added sugar is known, not guessed. Each value is the "Includes Xg Added Sugars" line from the product's US Nutrition Facts panel, read from a grocery-store product page that shows the full panel, for the serving shown. Items whose labels only give total sugar and contain milk, fruit, or juice were left out. The list and its source links live in [`js/treats.js`](js/treats.js), and the research notes are in [`devpost/sources.md`](devpost/sources.md).
+**Treats.** A treat only goes on the built-in list if its added sugar is known, not guessed. Each value is the "Includes Xg Added Sugars" line from the product's US Nutrition Facts panel, read from a grocery-store product page that shows the full panel, for the serving shown. Items whose labels only give total sugar and contain milk, fruit, or juice were left out. The list and its source links live in [`js/treats.js`](js/treats.js), and the research notes are in [`devpost/sources.md`](devpost/sources.md). Treats you add under My treats come from your own label and are stored only in your browser.
 
 Product names appear only to identify which Nutrition Facts panel a number came from. No logos or brand assets are used.
 
@@ -74,11 +75,11 @@ Treat Yourself is general guidance, not medical advice. Talk to your clinician a
 
 Plain HTML, CSS, and JavaScript modules, with no framework and no dependencies.
 
-- `index.html` — both screens (Profile and Tracker), the goal panel, the source popup, and the footer
+- `index.html` — both screens (Profile and Tracker), the goal panel, the source popup, the add-your-own-treat form, and the footer
 - `styles.css` — the pastel candy-shop look, layout, and reduced-motion fallback
 - `js/app.js` — wires the page together: loads saved state, renders, handles taps, checks for a new day
-- `js/logic.js` — the rules, as pure functions: `recommendedLimit`, `scaleState`, `isValidGoal`, `todayKey`
-- `js/storage.js` — safe localStorage reads and writes that never crash on blocked or corrupt data
+- `js/logic.js` — the rules, as pure functions: `recommendedLimit`, `scaleState`, `isValidGoal`, `todayKey`, `customTreatErrors`
+- `js/storage.js` — safe localStorage reads and writes (`ty.profile`, `ty.goal`, `ty.log`, `ty.custom`) that never crash on blocked or corrupt data
 - `js/treats.js` — the treat list with added sugar, serving, basis, and source link
 - `js/honey.js` — Honey the bear, drawn as SVG in four moods
 - `tests/` — the Node tests

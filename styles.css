@@ -366,7 +366,7 @@ main { position: relative; z-index: 1; }
 [data-category="Soda & drinks"]    { --card-tint: #e4f7ef; }
 [data-category="My treats"]        { --card-tint: #fff8e1; }
 
-.treat-card.is-custom .treat-sugar::after { content: " · yours"; font-weight: 600; color: var(--ink-soft); }
+.treat-yours { font-weight: 600; color: var(--ink-soft); }
 .add-card {
   min-height: 120px;
   display: grid;
@@ -381,7 +381,7 @@ main { position: relative; z-index: 1; }
   padding: .85rem;
   transition: transform .15s ease, background .15s ease;
 }
-.add-card:hover { transform: translateY(-2px); background: #ffe4ef; }
+.add-card:hover { transform: translateY(-2px); background: #fff6fa; }
 .add-card .add-plus { font-size: 1.6rem; line-height: 1; }
 .add-card small { display: block; font-weight: 600; color: var(--ink-soft); font-size: .78rem; }
 .picker-foot { margin: .9rem 0 0; font-size: .88rem; color: var(--ink-soft); font-weight: 600; }
